@@ -18,11 +18,11 @@ function love.draw()
     ball:draw()
 end 
 
-function isColliding(a, b)
-    if ((b.x >= a.x + a.width) or
-        (b.x + b.radius <= a.x) or
-        (b.y >= a.y + a.height) or
-        (b.y + b.radius <= a.y)) then
+function isColliding(p, b, x, y)
+    if ((x >= p.x + p.width) or
+        (x + b.radius + b.radius/2 <= p.x) or
+        (y >= p.y + p.height) or
+        (y + b.radius <= p.y)) then
            return false 
     else 
         return true
@@ -32,7 +32,9 @@ end
 function love.update(dt)
     player:move(dt)
     ball:move(dt)
-    if isColliding(player, ball) then 
+    x = ball.x - ball.radius/2
+    y = ball.y 
+    if isColliding(player, ball, x, y) then 
         ball.xvel = -ball.xvel
         print('hit')
     end
