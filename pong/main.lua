@@ -1,10 +1,12 @@
 Player = require 'player'
 Ball = require 'ball'
+Ai = require 'ai'
 
 function love.load()
     love.graphics.setBackgroundColor(0, 0.5, 0.2)
     player = Player:init()
     ball = Ball:init()
+    ai = Ai:init()
 end
 
 function love.keypressed(key)
@@ -15,6 +17,7 @@ end
 
 function love.draw()
     player:draw()
+    ai:draw()
     ball:draw()
 end 
 
@@ -32,10 +35,11 @@ end
 function love.update(dt)
     player:move(dt)
     ball:move(dt)
-    x = ball.x - ball.radius/2
-    y = ball.y 
-    if isColliding(player, ball, x, y) then 
+    ai:move(dt, ball)
+    x = ball.x - ball.radius
+    x2 = ball.x
+    y = ball.y
+    if isColliding(player, ball, x, y) or isColliding(ai, ball, x2, y) then 
         ball.xvel = -ball.xvel
-        print('hit')
     end
 end 
