@@ -20,4 +20,5 @@ end
 
 function love.update(dt)
     player:move(dt)
+    ball:move(dt, player    )
 end 

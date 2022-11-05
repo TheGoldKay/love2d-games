@@ -8,7 +8,7 @@ function Player:init()
     self = setmetatable({}, self)     
     self.width = 20
     self.height = 150
-    self.x = 20
+    self.x = 0
     self.y = love.graphics.getHeight() / 2 - self.height / 2
     self.color = {0, .1, .2}
     self.speed = 500
