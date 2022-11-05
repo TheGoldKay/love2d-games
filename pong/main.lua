@@ -1,8 +1,10 @@
 Player = require 'player'
+Ball = require 'ball'
 
 function love.load()
     love.graphics.setBackgroundColor(0, 0.5, 0.2)
     player = Player:init()
+    ball = Ball:init()
 end
 
 function love.keypressed(key)
@@ -13,6 +15,7 @@ end
 
 function love.draw()
     player:draw()
+    ball:draw()
 end 
 
 function love.update(dt)

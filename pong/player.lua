@@ -10,12 +10,13 @@ function Player:init()
     self.height = 150
     self.x = 20
     self.y = love.graphics.getHeight() / 2 - self.height / 2
-    self.color = {1, 1, 1}
+    self.color = {0, .1, .2}
     self.speed = 500
     return self
 end 
 
 function Player:draw()
+    love.graphics.setColor(self.color)
     love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
 end 
 
