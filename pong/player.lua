@@ -6,7 +6,7 @@ Player.__index = Player
 
 function Player:init()
     self = setmetatable({}, self)     
-    self.width = 20
+    self.width = 35
     self.height = 150
     self.x = 0
     self.y = love.graphics.getHeight() / 2 - self.height / 2
