@@ -14,3 +14,7 @@ end
 function love.draw()
     player:draw()
 end 
+
+function love.update(dt)
+    player:move(dt)
+end 
