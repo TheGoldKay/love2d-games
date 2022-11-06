@@ -62,7 +62,7 @@ function Snake:move(dt)
         tail.x = x
         tail.y = y
         table.insert(self.body, 1, tail)
-        table.remove(self.body, #self.body-1)
+        table.remove(self.body, #self.body)
     end 
 end 
 
