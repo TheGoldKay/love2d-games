@@ -10,14 +10,10 @@ function Snake:init()
     head = {}
     head.x = self.xmax / 2
     head.y = self.ymax / 2
-    self.vel = 1
-    self.xvel = -self.vel
-    self.yvel = 0
     self.s = 20
     self.timer = 0.2
     self.clock = 0
-    self.horizontal = true 
-    self.vertical = false 
+    self.dir = 'left'
     table.insert(self.body, head)
     x = head.x 
     for i = 1, 5, 1 do 
@@ -42,20 +38,31 @@ function Snake:move(dt)
     if self.clock > self.timer then 
         self.clock = 0
         local head = self.body[1]
-        head.x = head.x + self.xvel 
-        head.y = head.y + self.yvel 
-        if head.x <= 0 then 
-            head.x = self.xmax
-        elseif head.x >= self.xmax then 
-            head.x = 0
+        x, y = head.x, head.y
+        if self.dir == 'left' then 
+            x = x - 1
+        elseif self.dir == 'right' then 
+            x = x + 1
+        elseif self.dir == 'up' then 
+            y = y - 1
+        elseif self.dir == 'down' then 
+            y = y + 1
         end 
-        if head.y <= 0 then 
-            head.y = self.ymax
-        elseif head.y >= self.ymax then 
-            head.y = 0
+        if x <= 0 then 
+            x = self.xmax
+        elseif x >= self.xmax then 
+            x = 0
         end 
-        table.insert(self.body, 1, head)
-        table.remove(self.body, #self.body)
+        if y <= 0 then 
+            y = self.ymax
+        elseif y >= self.ymax then 
+            y = 0
+        end 
+        tail = self.body[#self.body-1]
+        tail.x = x
+        tail.y = y
+        table.insert(self.body, 1, tail)
+        table.remove(self.body, #self.body-1)
     end 
 end 
 

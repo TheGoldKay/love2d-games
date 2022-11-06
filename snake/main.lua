@@ -9,26 +9,14 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == 'w'and snake.vertical == false then 
-        snake.yvel = -snake.vel
-        snake.xvel = 0 
-        snake.vertical = true 
-        snake.horizontal = false
-    elseif key == 's'and snake.vertical == false then 
-        snake.yvel = snake.vel 
-        snake.xvel = 0
-        snake.vertical = true
-        snake.horizontal = false 
-    elseif key == 'a' and snake.horizontal == false then 
-        snake.xvel = -snake.vel
-        snake.yvel = 0
-        snake.horizontal = true 
-        snake.vertical = false 
-    elseif key == 'd' and snake.horizontal == false then 
-        snake.xvel = snake.vel 
-        snake.yvel = 0
-        snake.horizontal = true 
-        snake.vertical = false
+    if key == 'w' then 
+        snake.dir = 'up'
+    elseif key == 's' then 
+        snake.dir = 'down'
+    elseif key == 'a' then 
+        snake.dir = 'left'
+    elseif key == 'd' then 
+        snake.dir = 'right'
     elseif key == 'escape' then 
         love.event.quit()
     end
