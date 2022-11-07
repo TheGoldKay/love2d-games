@@ -1,11 +1,14 @@
-Snake = require 'snake'
+Snake = require('snake')
+Food = require('food')
 
 function  love.load()
     snake = Snake:init()
+    food = Food:init(snake.xmax, snake.ymax, snake.s)
 end 
 
 function love.draw()
     snake:draw()
+    food:draw()
 end
 
 function love.keypressed(key)
@@ -24,4 +27,5 @@ end
 
 function love.update(dt)
     snake:move(dt)
+    food = snake:eat(food)
 end
