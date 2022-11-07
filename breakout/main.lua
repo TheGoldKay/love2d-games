@@ -19,4 +19,5 @@ end
 
 function love.update(dt)
     pallet:move(dt)
+    ball:move(dt, pallet)
 end 
