@@ -1,11 +1,9 @@
 Pallet = require('pallet')
+Ball = require('ball')
 
 function love.load()
     pallet = Pallet:init()
-    ball = {}
-    ball.x = love.graphics.getWidth() / 2
-    ball.y = love.graphics.getHeight() / 2
-    ball.r = 20
+    ball = Ball:init()
 end 
 
 function love.keypressed(key)
@@ -16,7 +14,7 @@ end
 
 function love.draw()
     pallet:draw()
-    love.graphics.circle('line', ball.x, ball.y, ball.r)
+    ball:draw()
 end 
 
 function love.update(dt)
