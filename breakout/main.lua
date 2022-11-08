@@ -6,6 +6,7 @@ function love.load()
     pallet = Pallet:init()
     ball = Ball:init()
     grid = Grid:init()
+    stop = 1
 end 
 
 function love.keypressed(key)
@@ -35,11 +36,17 @@ end
  
 function love.update(dt)
     pallet:move(dt)
-    ball:move(dt, pallet)
+    if stop == 0 then 
+        ball:move(dt, pallet)
+    else 
+        stop = stop - 1
+    end 
     cx = ball.x + ball.r 
     cy = ball.x + ball.r 
     if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, pallet.x, pallet.y, pallet.w, pallet.h) then 
         ball.yvel = -ball.yvel 
+        stop = 1
+        ball:move(dt, pallet)
     end 
     i = 1
     for k, val in pairs(grid.rect) do 
