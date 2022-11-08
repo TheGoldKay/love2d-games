@@ -20,24 +20,25 @@ function love.draw()
     grid:draw()
 end 
 
--- Assuming a = {x = ..., y = ..., width = ..., height = ...}
--- Assuming b = {x = ..., y = ..., width = ..., height = ...}
+function circle_and_rectangle_overlap(cx, cy, cr, rx, ry, rw, rh)
+	local circle_distance_x = math.abs(cx - rx - rw/2)
+	local circle_distance_y = math.abs(cy - ry - rh/2)
 
-function isColliding(a,b)
-    if ((b.x >= a.x + a.w) or
-        (b.x + b.w <= a.x) or
-        (b.y >= a.y + a.h) or
-        (b.y + b.h <= a.y)) then
-            return false 
-        else 
-            return true
-    end
+	if circle_distance_x > (rw/2 + cr) or circle_distance_y > (rh/2 + cr) then
+		return false
+	elseif circle_distance_x <= (rw/2) or circle_distance_y <= (rh/2) then
+		return true
+	end
+
+	return (math.pow(circle_distance_x - rw/2, 2) + math.pow(circle_distance_y - rh/2, 2)) <= math.pow(cr, 2)
 end
  
 function love.update(dt)
     pallet:move(dt)
     ball:move(dt, pallet)
-    if isColliding(ball, pallet) then 
-        ball.yvel = -ball.yvel
+    cx = ball.x + ball.r 
+    cy = ball.x + ball.r 
+    if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, pallet.x, pallet.y, pallet.w, pallet.h) then 
+        ball.yvel = -ball.yvel 
     end 
 end 
