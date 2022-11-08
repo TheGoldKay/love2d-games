@@ -12,6 +12,8 @@ function Grid:init()
             box = {}
             box.x = self.w * j 
             box.y = self.h * i 
+            box.w = self.w 
+            box.h = self.h
             table.insert(self.rect, box)
         end 
     end 

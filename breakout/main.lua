@@ -41,4 +41,12 @@ function love.update(dt)
     if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, pallet.x, pallet.y, pallet.w, pallet.h) then 
         ball.yvel = -ball.yvel 
     end 
+    i = 1
+    for k, val in pairs(grid.rect) do 
+        if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, val.x, val.y, val.w, val.h) then 
+            ball.yvel = -ball.yvel
+            table.remove(grid.rect, i)
+        end 
+        i = i + 1
+    end 
 end 
