@@ -74,7 +74,7 @@ function Snake:eat(food)
         table.insert(self.body, {x=self.body[#self.body].x +1, y=self.body[#self.body].y})
         food:new()
     end 
-    return food 
+    --return food 
 end 
 
 return Snake

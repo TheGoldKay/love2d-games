@@ -27,5 +27,5 @@ end
 
 function love.update(dt)
     snake:move(dt)
-    food = snake:eat(food)
+    snake:eat(food)
 end
