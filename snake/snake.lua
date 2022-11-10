@@ -31,7 +31,7 @@ function Snake:draw()
     for k, part in pairs(self.body) do 
         x = self.box * part.x 
         y = self.box * part.y 
-        love.graphics.rectangle('fill', x, y, self.s, self.s)
+        love.graphics.rectangle('line', x, y, self.s, self.s)
     end 
 end 
 
@@ -60,7 +60,7 @@ function Snake:move(dt, food)
         elseif y >= self.ymax then 
             y = 0
         end 
-        tail = self.body[#self.body-1] 
+        tail = self.body[#self.body] 
         self.last = tail 
         tail.x = x
         tail.y = y
@@ -71,7 +71,7 @@ end
 
 function Snake:eat(food)
     if food.x == self.body[1].x and food.y == self.body[1].y then 
-        table.insert(self.body, {x=self.body[#self.body].x +1, y=self.body[#self.body].y})
+        table.insert(self.body, {x=self.body[#self.body].x, y=self.body[#self.body].y})
         food:new()
     end 
     --return food 

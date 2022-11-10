@@ -2,6 +2,7 @@ Snake = require('snake')
 Food = require('food')
 
 function  love.load()
+    love.graphics.setBackgroundColor(0.3, 0.3, 0.3)
     snake = Snake:init()
     food = Food:init(snake.xmax, snake.ymax, snake.s)
 end 
