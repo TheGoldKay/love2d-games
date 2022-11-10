@@ -21,6 +21,23 @@ function love.draw()
     grid:draw()
 end 
 
+function circle_and_rectangle_overlap1(circle, rect)
+    circleDistance = {}
+    circleDistance.x = math.abs(circle.x - rect.x)
+    circleDistance.y = math.abs(circle.y - rect.y)
+
+    if (circleDistance.x > (rect.w/2 + circle.r)) then return false end 
+    if (circleDistance.y > (rect.h/2 + circle.r)) then return false end 
+
+    if (circleDistance.x <= (rect.w/2)) then return true end 
+    if (circleDistance.y <= (rect.h/2)) then return true end 
+
+    cornerDistance_sq = (circleDistance.x - rect.w/2)^2 + (circleDistance.y - rect.h/2)^2
+
+    return cornerDistance_sq <= (circle.r^2)
+end 
+
+
 function circle_and_rectangle_overlap(cx, cy, cr, rx, ry, rw, rh)
 	local circle_distance_x = math.abs(cx - rx - rw/2)
 	local circle_distance_y = math.abs(cy - ry - rh/2)
@@ -44,6 +61,7 @@ function love.update(dt)
     cx = ball.x + ball.r 
     cy = ball.x + ball.r 
     if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, pallet.x, pallet.y, pallet.w, pallet.h) then 
+    --if circle_and_rectangle_overlap(ball, pallet) then 
         ball.yvel = -ball.yvel 
         stop = 1
         ball:move(dt, pallet)
@@ -51,6 +69,7 @@ function love.update(dt)
     i = 1
     for k, val in pairs(grid.rect) do 
         if circle_and_rectangle_overlap(ball.x, ball.y, ball.r, val.x, val.y, val.w, val.h) then 
+        --if circle_and_rectangle_overlap(ball, val) then 
             ball.yvel = -ball.yvel
             table.remove(grid.rect, i)
         end 
