@@ -12,7 +12,7 @@ end
 
 function Enemy:make_astro()
     local astro = {}
-    if #self.asteroids < 3 or self.clock > self.timer then 
+    if #self.asteroids < 3 or self.clock > self.timer and #self.asteroids < 10 then 
         astro.r = math.random(15, 70)
         astro.xvel = math.random(20, 80)
         if (math.random(1, 10) > 5) then 
@@ -24,6 +24,7 @@ function Enemy:make_astro()
         end 
         astro.x = math.random(0, win_w)
         astro.y = math.random(0, win_h)
+        astro.hit = 0
         table.insert(self.asteroids, astro)
         self.clock = 0
     end
