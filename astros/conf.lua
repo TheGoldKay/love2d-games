@@ -1,5 +1,8 @@
+win_w = 800
+win_h = 600
+
 function love.conf(t)
     t.window.title = 'Astros'
-    t.window.width = 800
-    t.window.height = 600
+    t.window.width = win_w
+    t.window.height = win_h
 end
