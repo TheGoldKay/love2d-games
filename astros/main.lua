@@ -1,4 +1,5 @@
 Player = require('player')
+Enemy = require('enemy')
 
 function love.load()
     player = Player:new()
