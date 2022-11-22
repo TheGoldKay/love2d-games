@@ -24,8 +24,15 @@ function beginContact(a, b, coll)
     i, j = a:getUserData(), b:getUserData()
     name1, num1 = i[1], i[2]
     name2, num2 = j[1], j[2]
-    if ((name1 == "enemy" and name2 == "bullet") or (name1 == "bullet" and name2 == "enemy")) then 
-        love.graphics.print("Collision Detected", 10, 10)
+    if (name1 == "enemy" and name2 == "bullet") then 
+        text = "Collision Detected: " .. num1 .. " " .. num2 
+        astros.asteroids[num1] = nil 
+        player.bullets[num2] = nil 
+    end 
+    if (name1 == "bullet" and name2 == "enemy") then 
+        text = "Collision Detected: " .. num1 .. " " .. num2 
+        player.bullets[num1] = nil 
+        astros.asteroids[num2] = nil 
     end 
     --name, num = i[1], i[2]
     --love.graphics.print(i_name .. i_num, 10, 10)
@@ -52,7 +59,7 @@ function love.draw()
     player:draw()
     astros:draw()
     --love.graphics.setColor(1, 0, 0)
-    --love.graphics.print(text, 10, 10)
+    love.graphics.print(text, 10, 10)
     --love.graphics.print(name1 .. num1, 10, 10)
     --love.graphics.print(name2 .. num2, 10, 30)
 end
