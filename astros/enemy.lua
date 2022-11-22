@@ -27,6 +27,15 @@ function Enemy:make_astro()
         astro.hit = 0
         table.insert(self.asteroids, astro)
         self.clock = 0
+
+        ball = {}
+        ball.b = love.physics.newBody(world, 400,200, "dynamic")  -- set x,y position (400,200) and let it move and hit other objects ("dynamic")
+        ball.b:setMass(10)                                        -- make it pretty light
+        ball.s = love.physics.newCircleShape(50)                  -- give it a radius of 50
+        ball.f = love.physics.newFixture(ball.b, ball.s)          -- connect body to shape
+        ball.f:setRestitution(0.4)                                -- make it bouncy
+        local data = {"enemy", #self.asteroids}
+        ball.f:setUserData(data)                                -- give it a name, which we'll access later
     end
 end 
 

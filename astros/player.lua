@@ -32,6 +32,14 @@ function Player:fire()
     bullet.x = x 
     bullet.y = y 
     bullet.r = self.r/5
+    ball = {}
+    ball.b = love.physics.newBody(world, x, y, "dynamic")  -- set x,y position (400,200) and let it move and hit other objects ("dynamic")
+    ball.b:setMass(10)                                        -- make it pretty light
+    ball.s = love.physics.newCircleShape(self.r)                  -- give it a radius of 50
+    ball.f = love.physics.newFixture(ball.b, ball.s)          -- connect body to shape
+    ball.f:setRestitution(0.4)                                -- make it bouncy
+    local data = {"bullet", #self.bullets}
+    ball.f:setUserData(data)                                -- give it a name, which we'll access later
     table.insert(self.bullets, bullet)
 end 
 

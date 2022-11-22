@@ -2,8 +2,13 @@ Player = require('player')
 Enemy = require('enemy')
 
 function love.load()
+    world = love.physics.newWorld(0, 0, true)  --Gravity is being set to 0 in the x direction and 200 in the y direction.
+    world:setCallbacks(beginContact, endContact, preSolve, postSolve)
     player = Player:new()
     astros = Enemy:new()
+    text = "Pyro Ruby"
+    name1, num1 = "", ""
+    name2, num2 = "", "" 
 end 
 
 function love.keypressed(key)
@@ -13,6 +18,19 @@ function love.keypressed(key)
         player:fire()
     end 
 end
+
+function beginContact(a, b, coll)
+    x, y = coll:getNormal()
+    i, j = a:getUserData(), b:getUserData()
+    name1, num1 = i[1], i[2]
+    name2, num2 = j[1], j[2]
+    if ((name1 == "enemy" and name2 == "bullet") or (name1 == "bullet" and name2 == "enemy")) then 
+        love.graphics.print("Collision Detected", 10, 10)
+    end 
+    --name, num = i[1], i[2]
+    --love.graphics.print(i_name .. i_num, 10, 10)
+    --text = text.."\n"..i[1].." colliding with "..j[1].." with a vector normal of: "..x..", "..y
+end 
 
 function bullet_astro_collision()
     for i, a in pairs(player.bullets) do 
@@ -27,15 +45,23 @@ function bullet_astro_collision()
                 end 
             end 
         end 
-    end
+    end                                                                                                                                                                                                                                                                                                 
 end
 
 function love.draw()
     player:draw()
     astros:draw()
+    --love.graphics.setColor(1, 0, 0)
+    --love.graphics.print(text, 10, 10)
+    --love.graphics.print(name1 .. num1, 10, 10)
+    --love.graphics.print(name2 .. num2, 10, 30)
 end
 
 function love.update(dt)
+    if string.len(text) > 768 then 
+        text = ""
+    end 
+    world:update(dt)
     player:update(dt)
     astros:make_astro()
     astros:update(dt)
