@@ -1,14 +1,17 @@
 Player = require('player')
 Enemy = require('enemy')
+wf = require('windfield')
 
 function love.load()
     world = love.physics.newWorld(0, 0, true)  --Gravity is being set to 0 in the x direction and 200 in the y direction.
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
+    w = wf.newWorld(0, 0, true)
+    w:setGravity(0, 0)
     player = Player:new()
     astros = Enemy:new()
     text = "Pyro Ruby"
     name1, num1 = "", ""
-    name2, num2 = "", "" 
+    name2, num2 = "", ""        
 end 
 
 function love.keypressed(key)
@@ -26,13 +29,13 @@ function beginContact(a, b, coll)
     name2, num2 = j[1], j[2]
     if (name1 == "enemy" and name2 == "bullet") then 
         text = "Collision Detected: " .. num1 .. " " .. num2 
-        astros.asteroids[num1] = nil 
-        player.bullets[num2] = nil 
+        --astros.asteroids[num1] = nil 
+        --player.bullets[num2] = nil 
     end 
     if (name1 == "bullet" and name2 == "enemy") then 
         text = "Collision Detected: " .. num1 .. " " .. num2 
-        player.bullets[num1] = nil 
-        astros.asteroids[num2] = nil 
+        --player.bullets[num1] = nil 
+        --astros.asteroids[num2] = nil 
     end 
     --name, num = i[1], i[2]
     --love.graphics.print(i_name .. i_num, 10, 10)
@@ -69,6 +72,7 @@ function love.update(dt)
         text = ""
     end 
     world:update(dt)
+    w:update(dt)
     player:update(dt)
     astros:make_astro()
     astros:update(dt)
