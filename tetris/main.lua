@@ -11,8 +11,21 @@ function love.keypressed(key)
     if (key == 'space' or key == 'w') then 
         pieces:rotate()
     end 
+    if (key == 'a' or key == 'left') then 
+        if(pieces.col > 0) then 
+            pieces.col = pieces.col - 1
+        end 
+    elseif (key == 'd' or key == 'right') then 
+        if(pieces.col < win_w) then 
+            pieces.col = pieces.col + 1 
+        end 
+    end 
 end 
 
 function love.draw()
     pieces:draw()
 end
+
+function love.update(dt)
+    pieces:update(dt)
+end 

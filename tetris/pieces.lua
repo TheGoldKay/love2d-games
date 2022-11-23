@@ -16,6 +16,9 @@ function Pieces:new()
     self.ncol = win_w / self.size 
     self.row = 5
     self.col = math.floor(self.ncol / 2)
+    self.timer = 10
+    self.clock = 0
+    self.out = false 
     return self 
 end 
 
@@ -43,6 +46,28 @@ function Pieces:rotate()
     self.index = self.index + 1
     if(self.index > len) then self.index = 1 end 
 end 
+
+function Pieces:can_move()
+    for _, pos in pairs(shapes[self.shape][self.index]) do 
+        local x, y = pos[2], pos[1]
+        x = (x + self.col ) * self.size 
+        y = (y + self.row ) * self.size
+        if y - 1 >= win_h - self.size * 2 then 
+            return false 
+        end 
+    end 
+    return true 
+end       
+
+function Pieces:update(dt)
+    self.clock = self.clock + 1
+    if(self:can_move() and self.clock > self.timer) then 
+        self.row = self.row + 1 
+        self.clock = 0 
+    end 
+    if (self.out) then 
+    end
+end
 
 function Pieces:draw()
     for i, pos in pairs(shapes[self.shape][self.index]) do 
