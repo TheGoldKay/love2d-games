@@ -2,14 +2,14 @@ Pieces = {}
 Pieces.__index = Pieces
 
 shapes = {}
-shapes["square"] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}}
+shapes["square"] = {{{0, 0}, {0, 1}, {1, 0}, {1, 1}}}
 shapes["line"] = {{{0, 0}, {1, 0}, {2, 0}, {3, 0}}, {{0, 0}, {0, 1}, {0, 2}, {0, 3}}}
 shapes["z"] = {{{0, 0}, {1, 0}, {1, 1}, {2, 1}}, {{0, 0}, {0, 1}, {-1, 1}, {-1, 2}}}
 shapes["s"] = {{{0, 0}, {1, 0}, {1, -1}, {2, -1}}, {{0, 0}, {0, 1}, {1, 1}, {1, 2}}}
 
 function Pieces:new()
     self = setmetatable({}, self)
-    self.shape = "s"
+    self.shape = self:get_piece()
     self.index = 1
     self.size = 40;
     self.nrow = win_h / self.size 
@@ -17,6 +17,22 @@ function Pieces:new()
     self.row = 5
     self.col = math.floor(self.ncol / 2)
     return self 
+end 
+
+function Pieces:get_piece()
+    if love.math.random(1, 10) > 5 then 
+        if love.math.random(1, 10) < 5 then 
+            return "square"
+        else 
+            return "line"
+        end 
+    else
+        if love.math.random(1, 10) > 5 then 
+            return "z"
+        else 
+            return "s"
+        end 
+    end 
 end 
 
 function Pieces:rotate()
