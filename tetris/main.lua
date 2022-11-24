@@ -19,7 +19,7 @@ function love.keypressed(key)
             pieces.col = pieces.col - 1
         end 
     elseif (key == 'd' or key == 'right') then 
-        if(pieces:can_move_x()) then 
+        if(pieces:can_move_x()) then  
             pieces.col = pieces.col + 1 
         end 
     end 
@@ -32,6 +32,5 @@ end
 
 function love.update(dt)
     pieces:update(dt)
-    pieces:piece_collision()
     grid:check()
 end 

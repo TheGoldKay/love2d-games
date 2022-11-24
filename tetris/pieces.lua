@@ -12,7 +12,6 @@ function Pieces:new()
     self:make_piece()
     self.timer = 10
     self.clock = 0
-    self.out = false 
     return self 
 end 
 
@@ -54,34 +53,35 @@ end
 function Pieces:can_move_x()
     for _, pos in pairs(shapes[self.shape][self.index]) do 
         x = pos[2] + self.col
+        y = pos[1] + self.row 
         if(x == 0 or x == self.ncol - 1) then 
             return false 
+        end 
+        if(x - 1 > 0) then 
+            if(grid.boxes[y+1][x-1].mode == 'fill') then 
+                return false 
+            end 
+        end 
+        if(x + 1 >= self.ncol) then 
+            if(grid.boxes[y+1][x-2].mode == 'fill') then 
+                return false 
+            end
         end 
     end 
     return true 
 end 
 
-function Pieces:piece_collision()
-    for i, pos in pairs(shapes[self.shape][self.index]) do 
-        local x, y = pos[2], pos[1]
-        x = x + self.col
-        y = y + self.row + 1
-        if(grid.boxes[y+1][x+1].mode == 'fill') then 
-            grid:lay()
-            self:make_piece()
-        end 
-    end 
-end 
-
 function Pieces:can_move_y()
     local y_max = 0
+    local col = 0
     for _, pos in pairs(shapes[self.shape][self.index]) do 
         local y = pos[1] + self.row 
         if(y > y_max) then 
             y_max = y
+            col = pos[2] + self.col 
         end 
     end 
-    if(y_max + 1>= self.nrow) then 
+    if(y_max + 1>= self.nrow or grid.boxes[y_max+2][col+1].mode == 'fill') then 
         grid:lay()
         self:make_piece()
         return false 
@@ -95,11 +95,7 @@ function Pieces:update(dt)
     if(self:can_move_y() and self.clock > self.timer) then 
         self.row = self.row + 1 
         self.clock = 0 
-        self.out = true 
     end 
-    if (self.out) then 
-
-    end
 end
 
 function Pieces:draw()
