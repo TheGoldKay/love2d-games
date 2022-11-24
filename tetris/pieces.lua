@@ -19,7 +19,7 @@ end
 function Pieces:make_piece()
     self.shape = self:get_piece()
     self.index = 1
-    self.size = 40
+    self.size = 20
     self.nrow = win_h / self.size 
     self.ncol = win_w / self.size 
     self.row = 1
@@ -51,18 +51,31 @@ function Pieces:rotate()
     if(self.index > len) then self.index = 1 end 
 end 
 
-function Pieces:can_move()
+function Pieces:move_sideway()
     for _, pos in pairs(shapes[self.shape][self.index]) do 
-        local x, y = pos[2], pos[1]
-        x = (x + self.col ) * self.size 
-        y = (y + self.row ) * self.size
-        if y - 1 >= win_h - self.size * 2 then 
-            grid:lay()
-            self:make_piece()
+        x = pos[2] + self.col
+        if(x == 0 or x == self.ncol - 1) then 
             return false 
         end 
     end 
     return true 
+end 
+
+function Pieces:can_move()
+    local y_max = 0
+    for _, pos in pairs(shapes[self.shape][self.index]) do 
+        local y = pos[1] + self.row 
+        if(y > y_max) then 
+            y_max = y
+        end 
+    end 
+    if(y_max + 1>= self.nrow) then 
+        grid:lay()
+        self:make_piece()
+        return false 
+    else 
+        return true 
+    end  
 end       
 
 function Pieces:update(dt)
@@ -78,12 +91,14 @@ function Pieces:update(dt)
 end
 
 function Pieces:draw()
+    love.graphics.setColor(0, 0, 0)
     for i, pos in pairs(shapes[self.shape][self.index]) do 
         local x, y = pos[2], pos[1]
         x = (x + self.col ) * self.size 
         y = (y + self.row ) * self.size 
         love.graphics.rectangle('fill', x, y, self.size, self.size)
     end 
+    love.graphics.setColor(0, 0, 0)
 end
 
 return Pieces

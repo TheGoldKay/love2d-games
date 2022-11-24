@@ -2,6 +2,7 @@ Pieces = require ('pieces')
 Grid = require ('grid')
 
 function love.load()
+    love.graphics.setBackgroundColor(0, 0.3, 0.1)
     pieces = Pieces:new()
     grid = Grid:new()
 end 
@@ -14,11 +15,11 @@ function love.keypressed(key)
         pieces:rotate()
     end 
     if (key == 'a' or key == 'left') then 
-        if(pieces.col > 0) then 
+        if(pieces:move_sideway()) then 
             pieces.col = pieces.col - 1
         end 
     elseif (key == 'd' or key == 'right') then 
-        if(pieces.col < win_w) then 
+        if(pieces:move_sideway()) then 
             pieces.col = pieces.col + 1 
         end 
     end 
