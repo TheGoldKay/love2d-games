@@ -1,7 +1,9 @@
 Pieces = require ('pieces')
+Grid = require ('grid')
 
 function love.load()
     pieces = Pieces:new()
+    grid = Grid:new()
 end 
 
 function love.keypressed(key)
@@ -24,6 +26,7 @@ end
 
 function love.draw()
     pieces:draw()
+    grid:draw()
 end
 
 function love.update(dt)

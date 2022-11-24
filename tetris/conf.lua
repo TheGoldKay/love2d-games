@@ -1,5 +1,5 @@
 win_w = 600
-win_h = 1000
+win_h = 800
 
 function love.conf(t)
     t.window.title = "Tetris"

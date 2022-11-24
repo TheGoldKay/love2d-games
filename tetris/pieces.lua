@@ -11,7 +11,7 @@ function Pieces:new()
     self = setmetatable({}, self)
     self.shape = self:get_piece()
     self.index = 1
-    self.size = 40;
+    self.size = 40
     self.nrow = win_h / self.size 
     self.ncol = win_w / self.size 
     self.row = 5
@@ -64,8 +64,10 @@ function Pieces:update(dt)
     if(self:can_move() and self.clock > self.timer) then 
         self.row = self.row + 1 
         self.clock = 0 
+        self.out = true 
     end 
     if (self.out) then 
+
     end
 end
 
@@ -76,15 +78,6 @@ function Pieces:draw()
         y = (y + self.row ) * self.size 
         love.graphics.rectangle('fill', x, y, self.size, self.size)
     end 
-    love.graphics.setColor(0, 0, 1)
-    for row = 0, self.nrow do 
-        for col = 0, self.ncol do 
-            y = row * self.size 
-            x = col * self.size 
-            love.graphics.rectangle('line', x, y, self.size, self.size)
-        end 
-    end
-    love.graphics.setColor(1,1,1)
 end
 
 return Pieces
