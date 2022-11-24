@@ -15,11 +15,11 @@ function love.keypressed(key)
         pieces:rotate()
     end 
     if (key == 'a' or key == 'left') then 
-        if(pieces:move_sideway()) then 
+        if(pieces:can_move_x()) then 
             pieces.col = pieces.col - 1
         end 
     elseif (key == 'd' or key == 'right') then 
-        if(pieces:move_sideway()) then 
+        if(pieces:can_move_x()) then 
             pieces.col = pieces.col + 1 
         end 
     end 
@@ -32,4 +32,5 @@ end
 
 function love.update(dt)
     pieces:update(dt)
+    pieces:piece_collision()
 end 

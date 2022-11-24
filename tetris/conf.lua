@@ -1,4 +1,4 @@
-win_w = 400
+win_w = 300
 win_h = 600
 
 function love.conf(t)

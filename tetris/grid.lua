@@ -35,7 +35,9 @@ function Grid:draw()
         for _, box in pairs(line) do 
             love.graphics.rectangle(box.mode, box.x, box.y, self.size, self.size)
             --love.graphics.setColor(1, 1, 1)
+            love.graphics.setColor(0, 0, 0)
             love.graphics.rectangle('line', box.x, box.y, self.size, self.size)
+            love.graphics.setColor(1, 1, 1)
         end 
     end 
     love.graphics.setColor(0, 0, 0)
