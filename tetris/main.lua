@@ -33,4 +33,5 @@ end
 function love.update(dt)
     pieces:update(dt)
     pieces:piece_collision()
+    grid:check()
 end 
