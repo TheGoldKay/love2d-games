@@ -9,18 +9,22 @@ shapes["s"] = {{{0, 0}, {1, 0}, {1, -1}, {2, -1}}, {{0, 0}, {0, 1}, {1, 1}, {1, 
 
 function Pieces:new()
     self = setmetatable({}, self)
-    self.shape = self:get_piece()
-    self.index = 1
-    self.size = 40
-    self.nrow = win_h / self.size 
-    self.ncol = win_w / self.size 
-    self.row = 5
-    self.col = math.floor(self.ncol / 2)
+    self:make_piece()
     self.timer = 10
     self.clock = 0
     self.out = false 
     return self 
 end 
+
+function Pieces:make_piece()
+    self.shape = self:get_piece()
+    self.index = 1
+    self.size = 40
+    self.nrow = win_h / self.size 
+    self.ncol = win_w / self.size 
+    self.row = 1
+    self.col = math.floor(self.ncol / 2)
+end
 
 function Pieces:get_piece()
     if love.math.random(1, 10) > 5 then 
@@ -53,6 +57,8 @@ function Pieces:can_move()
         x = (x + self.col ) * self.size 
         y = (y + self.row ) * self.size
         if y - 1 >= win_h - self.size * 2 then 
+            grid:lay()
+            self:make_piece()
             return false 
         end 
     end 
