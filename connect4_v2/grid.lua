@@ -95,7 +95,14 @@ function Grid:check_diags_v1()
 end
 
 function Grid:draw()
-    self:check_diags()
+    c = 1
+    for r, line in pairs(self.list) do 
+        y = r * self.size + self.gap 
+        x = c * self.size + self.gap 
+        love.graphics.print(c, x+15, y+15)
+        c = c + 1
+    end 
+    --self:check_diags()
     love.graphics.print(self.right, 10, 10)
     love.graphics.print(self.left, 10, 20)
     local x, y = self.player.x * self.size + self.gap, self.player.y * self.size + self.gap 

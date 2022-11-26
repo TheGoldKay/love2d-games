@@ -25,5 +25,5 @@ function love.draw()
 end
 
 function love.update(dt)
-    grid:check_diags()
+    --grid:check_diags()
 end
