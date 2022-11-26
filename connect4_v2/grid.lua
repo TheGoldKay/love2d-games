@@ -43,15 +43,20 @@ function Grid:make_grid()
 end  
 
 function Grid:check_diags()
-    count = 1
-    for r, line in pairs(self.list) do 
-        for c, box in pairs(line) do 
-            x = c * self.size + self.gap 
-            y = r * self.size + self.gap 
-            love.graphics.print(count, x+15, y+15)
-            count = count + 1
-        end
-    end
+    c = 6
+    for r = 1, self.nrow - c + 1 do 
+        y = r * self.size + self.gap 
+        x = c * self.size + self.gap 
+        love.graphics.print(c, x+15, y+15)
+        c = c + 1
+    end 
+    c = -1
+    for r = self.nrow + c + 1, 0, -1 do 
+        y = r * self.size + self.gap 
+        x = c * self.size + self.gap 
+        love.graphics.print(c, x+15, y+15)
+        c = c + 1
+    end 
 end
 
 function Grid:check_diags_v1()
@@ -95,13 +100,6 @@ function Grid:check_diags_v1()
 end
 
 function Grid:draw()
-    c = 1
-    for r, line in pairs(self.list) do 
-        y = r * self.size + self.gap 
-        x = c * self.size + self.gap 
-        love.graphics.print(c, x+15, y+15)
-        c = c + 1
-    end 
     --self:check_diags()
     love.graphics.print(self.right, 10, 10)
     love.graphics.print(self.left, 10, 20)

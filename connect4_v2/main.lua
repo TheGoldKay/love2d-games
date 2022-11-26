@@ -22,6 +22,7 @@ end
 
 function love.draw()
     grid:draw()
+    grid:check_diags()
 end
 
 function love.update(dt)
