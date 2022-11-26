@@ -8,8 +8,21 @@ function Grid:new()
     self.col = 6
     self.size = ((love.graphics.getWidth() / 4) / 6) * 2
     self:create_grid()
+    self:create_player()
     return self
 end
+
+function Grid:create_player()
+    local player = {}
+    player.x = self.gap + self.size / 2
+    player.y = self.gap - self.size / 2
+    player.r = self.size / 2
+    self.player = player
+end
+
+function Grid:draw_player()
+    love.graphics.circle('fill', self.player.x, self.player.y, self.player.r)
+end 
 
 function Grid:create_grid()
     self.list = {}
@@ -37,6 +50,7 @@ function Grid:create_grid()
 end 
 
 function Grid:draw()
+    self:draw_player()
     for _, cell in pairs(self.list) do 
         love.graphics.rectangle('line', cell.rect.x, cell.rect.y, self.size, self.size)
         love.graphics.circle(cell.circle.mode, cell.circle.x, cell.circle.y, self.size / 2)
