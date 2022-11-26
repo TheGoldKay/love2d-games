@@ -27,6 +27,7 @@ end
 function Grid:create_grid()
     self.list = {}
     for r = 0, self.row - 1 do 
+        local line = {}
         for c = 0, self.col - 1 do 
             local rect = {}
             local circle = {}
@@ -44,16 +45,19 @@ function Grid:create_grid()
             circle.mode = 'line'
             cell.circle = circle 
             --love.graphics.circle('line', cx, cy, self.size/2)
-            table.insert(self.list, cell)
-        end 
+            table.insert(line, cell)
+        end
+        table.insert(self.list, line) 
     end 
 end 
 
 function Grid:draw()
     self:draw_player()
-    for _, cell in pairs(self.list) do 
-        love.graphics.rectangle('line', cell.rect.x, cell.rect.y, self.size, self.size)
-        love.graphics.circle(cell.circle.mode, cell.circle.x, cell.circle.y, self.size / 2)
+    for _, line in pairs(self.list) do 
+        for _, cell in pairs(line) do 
+            love.graphics.rectangle('line', cell.rect.x, cell.rect.y, self.size, self.size)
+            love.graphics.circle(cell.circle.mode, cell.circle.x, cell.circle.y, self.size / 2)
+        end
     end 
 end 
 
