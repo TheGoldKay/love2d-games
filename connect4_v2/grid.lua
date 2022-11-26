@@ -15,8 +15,18 @@ end
 
 function Grid:make_player()
     self.player = {}
-    self.player.x = self.ncol / 2 
+    self.player.x = 1
     self.player.y = 0
+end
+
+function Grid:player_fall()
+    for i, line in pairs(self.list) do 
+        if(line[self.player.x].y >= self.nrow) then 
+            self.list[i][self.player.x].mode = 'fill'
+        elseif(self.list[i+1][self.player.x].mode == 'fill') then 
+            self.list[i][self.player.x].mode = 'fill'
+        end
+    end
 end
 
 function Grid:make_grid()
