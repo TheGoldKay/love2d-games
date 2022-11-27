@@ -64,46 +64,6 @@ function Grid:check_diags()
     end 
 end
 
-function Grid:check_diags_v1()
-    for r, line in pairs(self.list) do 
-        for c, box in pairs(line) do 
-            if(box.mode == 'fill') then 
-                step = 1
-                if(r+step < self.nrow and c+step < self.ncol and self.list[r+step][c+step].mode == 'fill') then 
-                    count = 1
-                    while(true) do 
-                        if(r+step < self.nrow and c+step < self.nrow and self.list[r+step][c+step].mode == 'fill') then 
-                            count = count + 1
-                            self.right = count
-                        else 
-                            break
-                        end
-                        step = step + 1
-                        if (count == 4) then 
-                            love.graphics.setBackgroundColor(0.2, 0.2, 0.2)
-                        end
-                    end
-                elseif(r-step >= 1 and c-step >= 1 and self.list[r-step][c-step].mode == 'fill') then 
-                    count = 1
-                    while(true) do 
-                        if(r-step >= 1 and c-step >= 1 and self.list[r-step][c-step].mode == 'fill') then 
-                            count = count + 1
-                            self.left = count 
-                        else 
-                            break
-                        end
-                        step = step - 1
-                        if(count == 4) then 
-                            love.graphics.setBackgroundColor(0.2, 0.2, 0.2)
-                        end
-                    end
-
-                end
-            end 
-        end
-    end
-end
-
 function Grid:draw()
     --self:check_diags()
     love.graphics.print(self.right, 10, 10)
