@@ -9,7 +9,9 @@ end
 function love.keypressed(key)
     if(key == 'escape') then 
         love.event.quit()
-    end 
+    elseif(key == 'space') then 
+        player:fire()
+    end
 end
 
 function love.draw()
