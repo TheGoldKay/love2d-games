@@ -13,3 +13,7 @@ end
 function love.draw()
     ships:draw()
 end
+
+function love.update(dt)
+    ships:update(dt)
+end
