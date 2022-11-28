@@ -36,6 +36,19 @@ function Player:bullet_update(dt)
     end
 end
 
+function Player:ship_hit()
+    for r, line in pairs(ships.grid) do 
+        for c, ship in pairs(line) do 
+            for i, bullet in pairs(self.bullets) do 
+                if((math.sqrt(math.pow(bullet.x - ship.x, 2) + math.pow(bullet.y - ship.y, 2)) < ships.size) and ship.alive) then 
+                    self.bullets[i] = nil 
+                    ships.grid[r][c].alive = false
+                end
+            end
+        end
+    end
+end
+
 function Player:update(dt)
     self:bullet_update(dt)
     if love.keyboard.isDown('d', 'right') then 
@@ -43,6 +56,7 @@ function Player:update(dt)
     elseif (love.keyboard.isDown('a', 'left')) then
         self.x = self.x - self.speed * dt
     end
+    self:ship_hit()
 end
 
 return Player

@@ -26,7 +26,7 @@ function Ships:make_grid()
         for c = 1, self.col do 
             local x = c * self.size + self.x_margin + c * self.x_gap 
             local y = r * self.size + self.y_margin + r * self.y_gap
-            table.insert(line, {x = x, y = y})
+            table.insert(line, {x = x, y = y, alive = true})
         end
         table.insert(self.grid, line)
     end
@@ -35,7 +35,9 @@ end
 function Ships:draw()
     for _, line in pairs(self.grid) do 
         for _, ship in pairs(line) do 
-            love.graphics.circle('line', ship.x, ship.y, self.size/2)
+            if(ship.alive) then 
+                love.graphics.circle('line', ship.x, ship.y, self.size/2)
+            end
         end
     end
 end
