@@ -22,4 +22,7 @@ end
 function love.update(dt)
     ships:update(dt)
     player:update(dt)
+    if(math.random(1, 1000) < 50) then 
+        ships:fire()
+    end
 end

@@ -15,24 +15,53 @@ function Ships:new(r, c)
     self.timer = 0.01
     self.clock = 0
     self.dir = 'left'
+    self.bullets = {}
+    self.timer = 1
+    self.clock = 0
     self:make_grid()
     return self 
 end 
+
+function Ships:fire()
+    local bullet = {}
+    local c = math.random(1, self.col)
+    local r = math.random(1, self.row)
+    if(self.grid[r][c].alive) then 
+        local x, y = self:getXY(r, c)
+        bullet.x = x 
+        bullet.y = y 
+        bullet.vel = 200
+        bullet.r = self.size / 4
+        table.insert(self.bullets, bullet)
+    end
+end 
+
+function Ships:getXY(r, c)
+    local x = c * self.size + self.x_margin + c * self.x_gap 
+    local y = r * self.size + self.y_margin + r * self.y_gap
+    return x, y
+end
 
 function Ships:make_grid()
     self.grid = {}
     for r = 1, self.row do 
         local line = {}
         for c = 1, self.col do 
-            local x = c * self.size + self.x_margin + c * self.x_gap 
-            local y = r * self.size + self.y_margin + r * self.y_gap
+            local x, y = self:getXY(r, c)
             table.insert(line, {x = x, y = y, alive = true})
         end
         table.insert(self.grid, line)
     end
 end 
 
+function Ships:draw_bullets()
+    for i, bullet in pairs(self.bullets) do
+        love.graphics.circle('line', bullet.x, bullet.y, bullet.r)
+    end
+end
+
 function Ships:draw()
+    self:draw_bullets()
     for _, line in pairs(self.grid) do 
         for _, ship in pairs(line) do 
             if(ship.alive) then 
@@ -66,8 +95,15 @@ function Ships:move_down()
     end
 end
 
+function Ships:update_bullets(dt)
+    for i, bullet in pairs(self.bullets) do
+        self.bullets[i].y = self.bullets[i].y + bullet.vel * dt
+    end
+end
+
 function Ships:update(dt)
     self:move_sideways(dt)
+    self:update_bullets(dt)
     for r = 1, self.row do 
         if(self.grid[r][self.col / 2].x <= 0) then 
             self.dir = 'right'
