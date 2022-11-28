@@ -66,6 +66,7 @@ function Player:update(dt)
         self.x = self.x - self.speed * dt
     end
     self:ship_hit()
+    self:player_hit()
 end
 
 return Player
