@@ -7,14 +7,15 @@ function Player:new()
     self.x = love.graphics.getWidth() / 2
     self.y = love.graphics.getHeight() - self.size 
     self.speed = 200
+    self.mode = 'line'
     self.bullets = {}
     return self 
 end
 
 function Player:draw()
-    love.graphics.circle('fill', self.x, self.y, self.size)
+    love.graphics.circle(self.mode, self.x, self.y, self.size)
     for i, bullet in pairs(self.bullets) do 
-        love.graphics.circle('fill', bullet.x, bullet.y, bullet.r)
+        love.graphics.circle(self.mode, bullet.x, bullet.y, bullet.r)
     end
 end
 
@@ -45,6 +46,14 @@ function Player:ship_hit()
                     ships.grid[r][c].alive = false
                 end
             end
+        end
+    end
+end
+
+function Player:player_hit()
+    for i, bullet in pairs(ships.bullets) do 
+        if(math.sqrt(math.pow(bullet.x - self.x, 2) + math.pow(bullet.y - self.y, 2)) < self.size) then 
+            self.mode = 'fill'
         end
     end
 end

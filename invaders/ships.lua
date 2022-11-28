@@ -12,12 +12,12 @@ function Ships:new(r, c)
     self.y_margin = 20
     self.y_gap = 10
     self.size = 30
-    self.timer = 0.01
+    self.timer = 0.001
     self.clock = 0
     self.dir = 'left'
     self.bullets = {}
-    self.timer = 1
-    self.clock = 0
+    self.bullet_timer = 1
+    self.bullet_clock = 0
     self:make_grid()
     return self 
 end 
@@ -98,6 +98,9 @@ end
 function Ships:update_bullets(dt)
     for i, bullet in pairs(self.bullets) do
         self.bullets[i].y = self.bullets[i].y + bullet.vel * dt
+        if(self.bullets[i].y >= love.graphics.getHeight()) then 
+            self.bullets[i] = nil 
+        end
     end
 end
 
