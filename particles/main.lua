@@ -38,7 +38,6 @@ end
 
 function love.draw()
 	love.graphics.setColor(1, 1, 1)
-	love.graphics.print("Arrow keys to move", 10, 10)
 
 	-- Draw the particle system. Note that we don't need to give the draw()
 	-- function any coordinates here as all individual particles have their
@@ -47,6 +46,6 @@ function love.draw()
 	love.graphics.draw(particleSystem)
 
 	-- Draw the player.
-	love.graphics.setColor(0, .5, 1)
-	love.graphics.circle("fill", playerX, playerY, 10)
+	--love.graphics.setColor(0, .5, 1)
+	--love.graphics.circle("fill", playerX, playerY, 10)
 end
