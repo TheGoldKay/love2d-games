@@ -10,6 +10,7 @@ function love.load()
 
 	local image = love.graphics.newImage(imageData)
 
+    love.mouse.setVisible(false)
 	-- Create and initialize the particle system object.
 	particleSystem = love.graphics.newParticleSystem(image, 1000)
 	particleSystem:setEmissionRate(150)
@@ -20,13 +21,14 @@ function love.load()
 	particleSystem:setColors(1,1,1,1, 1,1,0,1, 1,0,0,1, 1,0,0,0)
 end
 
+function love.keypressed(key)
+    if(key == 'escape') then 
+        love.event.quit()
+    end
+end
+
 function love.update(dt)
-	-- Update player position.
-	local moveSpeed = 250
-	if love.keyboard.isDown("left")  then  playerX = playerX - moveSpeed * dt  end
-	if love.keyboard.isDown("right") then  playerX = playerX + moveSpeed * dt  end
-	if love.keyboard.isDown("up")    then  playerY = playerY - moveSpeed * dt  end
-	if love.keyboard.isDown("down")  then  playerY = playerY + moveSpeed * dt  end
+    playerX, playerY = love.mouse.getPosition()
 
 	-- Move the particle system's particle emitter to the player's position so
 	-- that newly spawned particles appear where the player currently is.
