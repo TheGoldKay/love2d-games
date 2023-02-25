@@ -52,7 +52,7 @@ end
 
 function Player:player_hit()
     for i, bullet in pairs(ships.bullets) do 
-        if(math.sqrt(math.pow(bullet.x - self.x, 2) + math.pow(bullet.y - self.y, 2)) < self.size) then 
+        if(math.sqrt(math.pow(bullet.x - self.x, 2) + math.pow(bullet.y - self.y, 2)) < self.size + bullet.r) then 
             self.mode = 'fill'
         end
     end
