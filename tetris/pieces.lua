@@ -46,9 +46,25 @@ function Pieces:rotate()
     for _, _ in pairs(shapes[self.shape]) do 
         len = len + 1
     end 
+    local old_index = self.index 
     self.index = self.index + 1
     if(self.index > len) then self.index = 1 end 
+    if self:cant_stay() then 
+        self.index = old_index
+    end 
 end 
+
+function Pieces:cant_stay()
+    for _, pos in pairs(shapes[self.shape][self.index]) do 
+        x = pos[2] + self.col
+        y = pos[1] + self.row 
+        if (x > self.ncol or x < 0) then 
+            return true  
+        end
+    end
+    return false
+end
+    
 
 function Pieces:can_move_x()
     for _, pos in pairs(shapes[self.shape][self.index]) do 
