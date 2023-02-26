@@ -66,23 +66,14 @@ function Pieces:cant_stay()
 end
     
 
-function Pieces:can_move_x()
+function Pieces:can_move_x(dir)
     for _, pos in pairs(shapes[self.shape][self.index]) do 
-        x = pos[2] + self.col
-        y = pos[1] + self.row 
-        if(x == 0 or x == self.ncol - 1) then 
+        x = pos[2] + self.col + dir 
+        if(x < 0) then  
             return false 
-        end 
-        if(x - 1 > 0) then 
-            if(grid.boxes[y+1][x-1].mode == 'fill') then 
-                return false 
-            end 
-        end 
-        if(x + 1 >= self.ncol) then 
-            if(grid.boxes[y+1][x-2].mode == 'fill') then 
-                return false 
-            end
-        end 
+        elseif(x > self.ncol - 1) then 
+            return false 
+        end
     end 
     return true 
 end 
