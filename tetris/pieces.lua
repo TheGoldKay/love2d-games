@@ -49,12 +49,12 @@ function Pieces:rotate()
     local old_index = self.index 
     self.index = self.index + 1
     if(self.index > len) then self.index = 1 end 
-    if self:cant_stay() then 
+    if self:cant_stay_x() then 
         self.index = old_index
     end 
 end 
 
-function Pieces:cant_stay()
+function Pieces:cant_stay_x()
     for _, pos in pairs(shapes[self.shape][self.index]) do 
         x = pos[2] + self.col
         y = pos[1] + self.row 
@@ -88,6 +88,7 @@ function Pieces:can_move_y()
             col = pos[2] + self.col 
         end 
     end 
+    -- gather all other y_max on the same line and check for collisions
     if(y_max + 1>= self.nrow or grid.boxes[y_max+2][col+1].mode == 'fill') then 
         grid:lay()
         self:make_piece()
