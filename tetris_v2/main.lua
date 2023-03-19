@@ -58,20 +58,21 @@ local pieces = {
 }
 
 function love.load()
-    piece_size = 30
-    index = 1
+  piece = makePiece()
 end
 
 function makePiece()
+  piece = {}
+  piece.size = 30
+  piece.shape = pieces[math.random(1, 7)]
+  return piece 
 end 
 
 function love.keypressed(key)
-    if (key == 'space') then 
-        index = math.random(1, 7)
-    elseif (key == 'escape') then 
+    if (key == 'escape') then 
         love.event.quit()
     elseif (key == 's') then 
-        pieces[index] = rotatePiece(pieces[index])
+        piece.shape = rotatePiece(piece.shape)
     end
 end 
 
@@ -98,9 +99,8 @@ end
 
 function love.draw()
     -- Example usage: get the coordinates of the I piece
-    local coords = pieces[index]
-    for i = 1, #coords do
-        x, y = coords[i][1], coords[i][2]
-        love.graphics.rectangle('fill', 50 + x * piece_size , 300 + y * piece_size, piece_size, piece_size)
+    for i = 1, #piece.shape do
+        x, y = piece.shape[i][1], piece.shape[i][2]
+        love.graphics.rectangle('fill', 50 + x * piece.size , 300 + y * piece.size, piece.size, piece.size)
     end
 end 
