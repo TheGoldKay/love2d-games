@@ -2,14 +2,15 @@ require "tesound"
 
 function love.load()
     circle = make_circle()
-    explosion_sprites = load_images("explosion")
-    explosion_array = load_image_array("explosion")
+    explosion = newAnimation(love.graphics.newImage("explosion.png"), 100, 100, 0.3)
     love.graphics.setBackgroundColor(0.15, 0.15, 0.15)
+    mousex, mousey = 0, 0
+    hit = false 
 end
 
 function love.keypressed(key)
     if (key == 'escape') then 
-        love.event.quit("restart")
+        love.event.quit()
     end
 end
 
@@ -22,36 +23,29 @@ function make_circle()
     return circle 
 end
 
-function load_image_array(dir_name)
-    local explosion = love.filesystem.getDirectoryItems(dir_name)
-    local sprites = {}
-    for i = 1, #explosion do
-        sprites[i] = dir_name .. "/" .. explosion[i]
-    end
-    return love.graphics.newArrayImage(sprites)
-end 
+function newAnimation(image, width, height, duration)
+    local animation = {}
+    animation.spriteSheet = image;
+    animation.quads = {};
 
-function load_images(dir_name)
-    local explosion = love.filesystem.getDirectoryItems(dir_name)
-    local sprites = {}
-    for i = 1, #explosion do
-        local path = dir_name .. "/" .. explosion[i]
-        sprites[i] = love.graphics.newImage(path)
+    for y = 0, image:getHeight() - height, height do
+        for x = 0, image:getWidth() - width, width do
+            table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
+        end
     end
-    return sprites
-end 
 
-function draw_sprites(sprites, x, y)
-    for i, v in ipairs(sprites) do
-        love.graphics.draw(v, x, y)
-    end
-end 
+    animation.duration = duration or 1
+    animation.currentTime = 0
+
+    return animation
+end
 
 function love.mousepressed(x, y, button)
     if (button == 1) then 
         if (math.sqrt(math.pow(x - circle.x, 2) + math.pow(y - circle.y, 2)) < circle.r) then 
             TEsound.play("sounds/DeathFlash.flac", "static")
-            --draw_sprites(explosion_sprites, circle.x, circle.y)
+            hit = true
+            mousex, mousey = x, y
             make_circle()
         end
     end
@@ -68,11 +62,19 @@ function love.draw()
     love.graphics.circle('fill', circle.x, circle.y, circle.r)
     love.graphics.setColor({1, 1, 1}) -- white
     love.graphics.circle('line', circle.x, circle.y, circle.r+1)
-    for i = 1, #explosion_sprites do 
-        love.graphics.drawLayer(explosion_array, i, 100, 100)
+    if (hit) then 
+        local spriteNum = math.floor(explosion.currentTime / explosion.duration * #explosion.quads) + 1
+        love.graphics.draw(explosion.spriteSheet, explosion.quads[spriteNum], mousex, mousey, 0, 2)
+        if(spriteNum == #explosion.quads) then 
+            hit = false 
+        end 
     end 
 end
 
 function love.update(dt)
     TEsound.cleanup()
+    explosion.currentTime = explosion.currentTime + dt
+    if explosion.currentTime >= explosion.duration then
+        explosion.currentTime = explosion.currentTime - explosion.duration
+    end
 end
