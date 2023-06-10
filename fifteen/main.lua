@@ -2,6 +2,7 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
     cell = makeCell()
     grid = makeGrid(4, 4)
+    font = makeFont()
 end
 
 function love.keypressed(key)
@@ -9,6 +10,13 @@ function love.keypressed(key)
         love.event.quit()
     end
 end
+
+function makeFont()
+    local font = {}
+    font.size = 24
+    font.font = love.graphics.newFont(font.size)
+    return font 
+end 
 
 function makeCell()
     local cell = {}
@@ -48,7 +56,7 @@ function love.draw()
             love.graphics.setColor(0, 0, 0)
             love.graphics.rectangle("line", x, y, cell.size, cell.size)
             love.graphics.setColor(1, 1, 1)
-            love.graphics.print(num, x + cell.size / 2, y + cell.size / 2)
+            love.graphics.print(num, font.font, x + cell.size / 2 - font.size / 2, y + cell.size / 2 - font.size / 2)
         end
     end
 end
