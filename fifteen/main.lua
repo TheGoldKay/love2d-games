@@ -3,6 +3,10 @@ function love.load()
     grid = makeGrid(4, 4)
     font = makeFont()
     blank = {4, 4} -- the number 16 (last one is black) (row, col)
+    shuffle_clock = 0 
+    shuffle_timer = .08
+    shuffle_steps = 30
+    math.randomseed(os.time())
 end
 
 function makeFont()
@@ -40,10 +44,35 @@ function randColor()
     return {r, g, b}
 end
 
-function love.keypressed(key)
-    if(key == "escape") then 
-        love.event.quit()
+function allowedMoves()
+    local row, col = blank[1], blank[2]
+    local moves = {}
+    if(row + 1 <= 4) then 
+        table.insert(moves, 'w')
+    end 
+    if(row - 1 >= 1) then 
+        table.insert(moves, 's')
     end
+    if(col + 1 <= 4) then 
+        table.insert(moves, 'a')
+    end
+    if(col - 1 >= 1) then 
+        table.insert(moves, 'd')
+    end
+    return moves 
+end
+
+function shuffleTiles()
+    if(shuffle_clock >= shuffle_timer and shuffle_steps > 0) then 
+        local moves = allowedMoves()
+        local key = moves[math.random(#moves)]
+        tileMove(key)
+        shuffle_steps = shuffle_steps - 1
+        shuffle_clock = 0
+    end 
+end
+
+function tileMove(key)
     local row, col = blank[1], blank[2]
     if(key == 's') then 
         if(row - 1 >= 1) then 
@@ -76,6 +105,16 @@ function love.keypressed(key)
     end
 end
 
+function love.keypressed(key)
+    if(key == "escape") then 
+        love.event.quit()
+    end
+    tileMove(key)
+    if(key == 'space') then 
+        shuffleTiles(10)
+    end
+end
+
 
 function love.draw()
     for row, line in ipairs(grid) do 
@@ -92,4 +131,11 @@ function love.draw()
             love.graphics.rectangle("line", x, y, cell.size, cell.size)
         end
     end
+end
+
+function love.update(dt)
+    if(shuffle_steps > 0) then 
+        shuffleTiles()
+        shuffle_clock = shuffle_clock + dt 
+    end 
 end
