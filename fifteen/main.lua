@@ -5,7 +5,7 @@ function love.load()
     blank = {4, 4} -- the number 16 (last one is black) (row, col)
     shuffle_clock = 0 
     shuffle_timer = .08
-    shuffle_steps = 30
+    shuffle_steps = 20
     math.randomseed(os.time())
 end
 
@@ -105,14 +105,38 @@ function tileMove(key)
     end
 end
 
+function checkTiles()
+    local nums = {}
+    local sorted_nums = {}
+    for row = 1, 4 do 
+        for col = 1, 4 do 
+            local num = grid[row][col]
+            table.insert(nums, num)
+        end
+    end
+    sorted_nums = {}
+    for k, v in pairs(nums) do 
+        table.insert(sorted_nums, v)
+    end
+    table.sort(sorted_nums)
+    if(love.keyboard.isDown('space')) then 
+        for i = 1, 16 do 
+            print(nums[i], sorted_nums[i])
+        end
+    end
+    for i = 1, 16 do 
+        if(sorted_nums[i] ~= nums[i]) then 
+            return false   
+        end
+    end
+    return true 
+end
+
 function love.keypressed(key)
     if(key == "escape") then 
         love.event.quit()
     end
     tileMove(key)
-    if(key == 'space') then 
-        shuffleTiles(10)
-    end
 end
 
 
@@ -138,4 +162,9 @@ function love.update(dt)
         shuffleTiles()
         shuffle_clock = shuffle_clock + dt 
     end 
+    if(shuffle_steps == 0) then 
+        if(checkTiles()) then 
+            love.event.quit()
+        end
+    end
 end
