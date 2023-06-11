@@ -31,6 +31,10 @@ function getPlayerPos()
     end
 end  
 
+function nextLevel()
+    current_level = current_level + 1
+end 
+
 function love.keypressed(key)
     local level = levels[current_level]
     local p_row, p_col = getPlayerPos()
