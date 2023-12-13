@@ -1,0 +1,3 @@
+* Added support for moonscript: Simply a possibility at the moment (future implementations if feasiable)
+-> moon script.moon (runs moonscript code file)
+-> moonc script.moon (compiles moonscript code to lua)

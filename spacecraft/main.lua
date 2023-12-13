@@ -1,13 +1,11 @@
-local settings = require("conf")
+local ffi = require("ffi")
 
 function love.load()
-    local desktopWidth, desktopHeight = love.window.getDesktopDimensions()
-    love.window.setPosition(desktopWidth / 2 - settings.window.width / 2, 100)
-    love.graphics.setBackgroundColor(rgb(18, 53, 36))
+  love.graphics.setBackgroundColor(rgb(18, 53, 36))
 end
 
 function rgb(r, g, b)
-    return { r / 255, g / 255, b / 255 }
+    return { r / 255, g / 255, b / 255, 0.1}
 end
 
 function love.keypressed(key)
