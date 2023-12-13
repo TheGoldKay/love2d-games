@@ -4,7 +4,10 @@ local settings = {
         width = 500,
         height = 500,
         borderless = true, 
-        fullscreen = false
+        fullscreen = false,
+    },
+    color = {
+        deep_green = {18, 53, 36},
     }
 }
 
@@ -16,7 +19,7 @@ function love.conf(t)
         t.window.height = settings.window.height
     end
     t.window.title = settings.window.title
-    t.window.borderless = settings.window.borderless
+    --t.window.borderless = settings.window.borderless
 end 
 
 return settings 
