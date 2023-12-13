@@ -1,3 +1,8 @@
 * Added support for moonscript: Simply a possibility at the moment (future implementations if feasiable)
 -> moon script.moon (runs moonscript code file)
 -> moonc script.moon (compiles moonscript code to lua)
+
+* The window is now transparent like I wanted, but everything drawn upon it is also invisible, I tried the same
+approach with pygame but it didn't interfere with objects blit onto the screen, something love2d isn't capable of 
+handling
+* Find a way to display game objects (while maintaining the love2d screen's transparency of 100%)
