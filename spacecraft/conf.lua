@@ -19,7 +19,7 @@ function love.conf(t)
         t.window.height = settings.window.height
     end
     t.window.title = settings.window.title
-    t.window.borderless = settings.window.borderless
+    --t.window.borderless = settings.window.borderless
 end 
 
 return settings 
