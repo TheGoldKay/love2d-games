@@ -4,7 +4,10 @@ local settings = {
         width = 500,
         height = 500,
         borderless = true, 
-        fullscreen = true,
+        fullscreen = false,
+    }, 
+    color = {
+        deep_green = {18, 53, 36} -- phthalo green
     }
 }
 

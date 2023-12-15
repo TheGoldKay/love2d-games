@@ -5,6 +5,19 @@ local ffi = require("ffi")
 local bit = require("bit")
 local user32 = ffi.load("user32")
 
+ffi.cdef[[
+    typedef void* HWND;
+    typedef unsigned long DWORD;
+    typedef unsigned char BYTE;
+    typedef bool BOOL;
+    typedef long LONG;
+
+    HWND FindWindowA(const char* lpClassName, const char* lpWindowName);
+    BOOL SetWindowLongA(HWND hWnd, int nIndex, DWORD dwNewLong);
+    BOOL SetLayeredWindowAttributes(HWND hWnd, DWORD crKey, BYTE bAlpha, DWORD dwFlags);
+    DWORD GetWindowLongA(HWND hWnd, int nIndex); 
+]]
+
 function setWindowTransparent(window_name, transparent_color)
     -- make sure window_name is the same as in your love2d's conf.lua (love.conf)
     -- the default color is black (0x000000) for the trasparency mask 
@@ -17,19 +30,6 @@ function setWindowTransparent(window_name, transparent_color)
     elseif type(transparent_color) == "table" then 
         transparent_color = rgb2long(transparent_color)
     end 
-    ffi.cdef[[
-        typedef void* HWND;
-        typedef unsigned long DWORD;
-        typedef unsigned char BYTE;
-        typedef bool BOOL;
-        typedef long LONG;
-
-        HWND FindWindowA(const char* lpClassName, const char* lpWindowName);
-        BOOL SetWindowLongA(HWND hWnd, int nIndex, DWORD dwNewLong);
-        BOOL SetLayeredWindowAttributes(HWND hWnd, DWORD crKey, BYTE bAlpha, DWORD dwFlags);
-        DWORD GetWindowLongA(HWND hWnd, int nIndex); 
-    ]]
-
     -- Constants
     local GWL_EXSTYLE = -20
     local WS_EX_LAYERED = 0x80000
@@ -48,9 +48,9 @@ function setWindowTransparent(window_name, transparent_color)
 end 
 
 function love.load()
-    local transparent_color = {1, 1, 1} -- change to something you won't use in your game
+    local transparent_color = settings.color.deep_green -- change to something you won't use in your game
     love.graphics.setBackgroundColor(rgb(transparent_color)) -- background color equal transparency color mask
-    setWindowTransparent(love.window.getTitle(), transparent_color)
+    setWindowTransparent(settings.window.title, transparent_color)
     ship = love.graphics.newImage("assets/ship.png")
     ship2 = love.graphics.newImage("assets/ship2.png")
     block = love.graphics.newImage("assets/block.png")
@@ -74,9 +74,10 @@ end
 function love.draw()
     local winW = love.graphics.getWidth()
     local winH = love.graphics.getHeight()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(ship2, winW / 2 - ship2:getWidth() / 2, winH / 2 - ship2:getHeight() / 2)
+    --love.graphics.setColor(rgb(255, 255, 255))
     --love.graphics.draw(block, winW / 2 - block:getWidth() / 2, winH / 2 - block:getHeight() / 2)
+    love.graphics.draw(ship2, winW / 2 - ship2:getWidth() / 2, winH / 2 - ship2:getHeight() / 2)
+    
 end
 
 function love.keypressed(key)
