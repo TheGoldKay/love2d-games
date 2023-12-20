@@ -1,4 +1,5 @@
 local settings = require "conf"
+local json = require "json/json"
 
 function love.load()
     --love.graphics.setBackgroundColor(rbg(unpack(settings.window.bg_color)))
@@ -17,6 +18,9 @@ function love.load()
     bullets = {} -- list of bullets (fired)
     bullets.img = love.graphics.newImage("assets/BeholderBullets.png")
     bullets.list = {} -- no bullets fired yet
+    wordlist = love.filesystem.read("assets/wordlist.json")
+    local data = json.decode(wordlist)
+    print(data[#data])
 end
 
 function nextBg()
