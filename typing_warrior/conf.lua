@@ -2,7 +2,7 @@ settings = {
     window = {
         title = "Typing Warrior",
         width = 400,
-        height = 630,
+        height = 700,
         bg_color = {191, 64, 191},
     }
 }
