@@ -25,12 +25,24 @@ function love.load()
     words.list = json.decode(json_data) -- the whole wordlist
     words.min = 2 -- the minimum length of the word to be display 
     words.max = 4
-    word = getWord()
+    words.current = getWord()
     --- font --
-    teko_font = love.graphics.newFont("assets/Teko/Teko-VariableFont_wght.ttf", 32)
+    teko_font = love.graphics.newFont("assets/Teko/static/Teko-Bold.ttf", 42)
+end
+
+function getWordPair(word)
+    local pair_list = {}
+    for char in word:gmatch(".") do
+        local letter = {}
+        letter.char = char 
+        letter.is_pressed = false 
+        pair_list[#pair_list + 1] = letter 
+    end
+    return pair_list
 end
 
 function getWord()
+    -- the word is a table of two value tables {char, is_pressed}
     math.randomseed(os.time())
     local list = lume.shuffle(words.list)
     for i = 1, #list do 
@@ -38,7 +50,7 @@ function getWord()
         if string.len(word) >= words.min and string.len(word) <= words.max then
             table.remove(list, i)
             words.list = list
-            return word
+            return getWordPair(word)
         end
     end
 end
@@ -58,6 +70,21 @@ function rbg(r, g, b)
     return {r / 255, g / 255, b / 255}
 end
 
+function displayWord(word)
+    love.graphics.setFont(teko_font)
+    local x, y = settings.window.width / 2, 100
+    for i, letter in ipairs(words.current) do 
+        if letter.is_pressed then
+            love.graphics.setColor(rbg(255, 0, 0))
+        else 
+            love.graphics.setColor(rbg(255, 255, 0))
+        end 
+        love.graphics.print(letter.char, x, y)
+        x = x + teko_font:getWidth(letter.char)
+    end
+    love.graphics.setColor(rbg(255, 255, 255))
+end
+
 function love.draw()
     love.graphics.draw(bg.img, 0, bg.y)
     if next(bg.prev) then
@@ -69,10 +96,7 @@ function love.draw()
             love.graphics.draw(bullets.img, bullets.list[i].x, bullets.list[i].y)
         end
     end
-    love.graphics.setFont(teko_font)
-    love.graphics.setColor(rbg(255, 255, 0))
-    love.graphics.print(word, settings.window.width / 2 - teko_font:getWidth(word) / 2, 100)
-    love.graphics.setColor(rbg(255, 255, 255))
+    displayWord(words.current)
 end
 
 function love.keypressed(key)
@@ -80,6 +104,8 @@ function love.keypressed(key)
         love.event.quit()
     elseif key == "space" then 
         table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 4, y = ship.y})
+    elseif key == "f" then 
+        words.current = getWord()
     end
 end
 
