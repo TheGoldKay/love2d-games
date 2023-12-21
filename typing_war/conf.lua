@@ -4,6 +4,10 @@ settings = {
         width = 400,
         height = 700,
         bg_color = {191, 64, 191},
+    },
+    lettering = {
+        pressed = {255, 0, 0},
+        not_pressed = {255, 255, 0},
     }
 }
 

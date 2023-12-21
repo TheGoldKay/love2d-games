@@ -27,7 +27,7 @@ function love.load()
     words.max = 4
     words.current = getWord()
     --- font --
-    teko_font = love.graphics.newFont("assets/Teko/static/Teko-Bold.ttf", 42)
+    teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
 end
 
 function getWordPair(word)
@@ -50,7 +50,12 @@ function getWord()
         if string.len(word) >= words.min and string.len(word) <= words.max then
             table.remove(list, i)
             words.list = list
-            return getWordPair(word)
+            local current = {}
+            current.str = word 
+            current.list = getWordPair(word)
+            current.next = {char = word:sub(1, 1), index = 1}
+            current.active = true
+            return current
         end
     end
 end
@@ -70,14 +75,14 @@ function rbg(r, g, b)
     return {r / 255, g / 255, b / 255}
 end
 
-function displayWord(word)
+function displayWord(current)
     love.graphics.setFont(teko_font)
-    local x, y = settings.window.width / 2, 100
-    for i, letter in ipairs(words.current) do 
+    local x, y = settings.window.width / 2 - teko_font:getWidth(current.str) / 2, 100
+    for i, letter in ipairs(current.list) do 
         if letter.is_pressed then
-            love.graphics.setColor(rbg(255, 0, 0))
+            love.graphics.setColor(rbg(unpack(settings.lettering.pressed)))
         else 
-            love.graphics.setColor(rbg(255, 255, 0))
+            love.graphics.setColor(rbg(unpack(settings.lettering.not_pressed)))
         end 
         love.graphics.print(letter.char, x, y)
         x = x + teko_font:getWidth(letter.char)
@@ -99,13 +104,26 @@ function love.draw()
     displayWord(words.current)
 end
 
+function shipFire()
+    table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 4, y = ship.y})
+end
+
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
+    elseif key == "up" then 
+        shipFire()
     elseif key == "space" then 
-        table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 4, y = ship.y})
-    elseif key == "f" then 
         words.current = getWord()
+    elseif key == words.current.next.char and words.current.active then 
+        shipFire()
+        words.current.list[words.current.next.index].is_pressed = true 
+        words.current.next.index = words.current.next.index + 1
+        if #words.current.list < words.current.next.index then
+            words.current.active = false
+        else 
+            words.current.next.char = words.current.list[words.current.next.index].char
+        end
     end
 end
 
