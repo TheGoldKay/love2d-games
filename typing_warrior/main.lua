@@ -1,5 +1,7 @@
 local settings = require "conf"
 local json = require "json/json"
+local fun = require "fun/fun"
+local lume = require "lume/lume"
 
 function love.load()
     --love.graphics.setBackgroundColor(rbg(unpack(settings.window.bg_color)))
@@ -18,9 +20,23 @@ function love.load()
     bullets = {} -- list of bullets (fired)
     bullets.img = love.graphics.newImage("assets/BeholderBullets.png")
     bullets.list = {} -- no bullets fired yet
-    wordlist = love.filesystem.read("assets/wordlist.json")
-    local data = json.decode(wordlist)
-    print(data[#data])
+    local json_data = love.filesystem.read("assets/wordlist.json")
+    wordlist = json.decode(json_data)
+    word_min = 2 -- the minimum length of the word to be display 
+    word_max = 4
+end
+
+function getWord()
+    math.randomseed(os.time())
+    local list = lume.shuffle(wordlist)
+    for i = 1, #list do 
+        local word = list[i]
+        if string.len(word) >= word_min and string.len(word) <= word_max then
+            table.remove(list, i)
+            wordlist = list
+            return word
+        end
+    end
 end
 
 function nextBg()
@@ -39,6 +55,7 @@ function rbg(r, g, b)
 end
 
 function love.draw()
+    print(getWord())
     love.graphics.draw(bg.img, 0, bg.y)
     if next(bg.prev) then
         love.graphics.draw(bg.prev.img, 0, bg.prev.y)
