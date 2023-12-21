@@ -7,7 +7,7 @@ function love.load()
     --love.graphics.setBackgroundColor(rbg(unpack(settings.window.bg_color)))
     bg = {} -- background object
     -- index start at 1 in Lua
-    bg.index = 1 -- there are currently seven long (3000 pixels) backgrounds to create the illusion of movement
+    bg.index = 9 -- there are currently seven long (3000 pixels) backgrounds to create the illusion of movement
     -- once it reaches the end of the screen, load the next background
     bg.img = love.graphics.newImage(nextBg())
     bg.prev = {} --- table with the previous background img and position
@@ -20,12 +20,14 @@ function love.load()
     bullets = {} -- list of bullets (fired)
     bullets.img = love.graphics.newImage("assets/BeholderBullets.png")
     bullets.list = {} -- no bullets fired yet
+    bullets.vel = 5000
     local json_data = love.filesystem.read("assets/wordlist.json")
     words = {} -- list of words and other data related
     words.list = json.decode(json_data) -- the whole wordlist
     words.min = 2 -- the minimum length of the word to be display 
     words.max = 4
     words.current = getWord()
+    words.timer = {clock = 0, wait = 0.5, active = false}
     --- font --
     teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
 end
@@ -61,7 +63,7 @@ function getWord()
 end
 
 function nextBg()
-    if bg.index <= 7 then 
+    if bg.index <= 9 then 
         local bgImg = string.format("assets/bg%d.png", bg.index)
         bg.index = bg.index + 1
         return bgImg    
@@ -71,23 +73,42 @@ function nextBg()
     end
 end
 
-function rbg(r, g, b)
-    return {r / 255, g / 255, b / 255}
+function rgb(r, g, b)
+    if type(r) == "table" then
+        return {r[1] / 255, r[2] / 255, r[3] / 255}
+    else 
+        return {r / 255, g / 255, b / 255}
+    end
 end
+
+function printOutlinedText(text, color, x, y)
+    -- Drawn the outline
+    love.graphics.setColor(settings.lettering.outline)
+    for i = -1, settings.lettering.offset.x do 
+        for j = -1, settings.lettering.offset.y do
+            love.graphics.print(text, x + i, y + j)
+        end
+    end
+    -- Draw the main text
+    love.graphics.setColor(color)
+    love.graphics.print(text, x, y)
+end
+
 
 function displayWord(current)
     love.graphics.setFont(teko_font)
     local x, y = settings.window.width / 2 - teko_font:getWidth(current.str) / 2, 100
+    local color -- the color of the text (word to be displayed)
     for i, letter in ipairs(current.list) do 
         if letter.is_pressed then
-            love.graphics.setColor(rbg(unpack(settings.lettering.pressed)))
+            color = rgb(settings.lettering.pressed)
         else 
-            love.graphics.setColor(rbg(unpack(settings.lettering.not_pressed)))
+            color = rgb(settings.lettering.not_pressed)
         end 
-        love.graphics.print(letter.char, x, y)
+        printOutlinedText(letter.char, color, x, y)
         x = x + teko_font:getWidth(letter.char)
     end
-    love.graphics.setColor(rbg(255, 255, 255))
+    love.graphics.setColor(settings.WHITE)
 end
 
 function love.draw()
@@ -115,12 +136,12 @@ function love.keypressed(key)
         shipFire()
     elseif key == "space" then 
         words.current = getWord()
-    elseif key == words.current.next.char and words.current.active then 
+    elseif key == words.current.next.char then 
         shipFire()
         words.current.list[words.current.next.index].is_pressed = true 
         words.current.next.index = words.current.next.index + 1
         if #words.current.list < words.current.next.index then
-            words.current.active = false
+            words.timer.active = true
         else 
             words.current.next.char = words.current.list[words.current.next.index].char
         end
@@ -128,6 +149,14 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
+    if words.timer.active then
+        words.timer.clock = words.timer.clock + dt
+        if words.timer.clock >= words.timer.wait then
+            words.timer.clock = 0
+            words.timer.active = false
+            words.current = getWord()
+        end
+    end
     bg.y = bg.y + bg.vel * dt
     if bg.y >= 0 then
         --- set the currently bg (now previous) to still be displayed till its full length
@@ -139,7 +168,7 @@ function love.update(dt)
     end
     if #bullets.list > 0 then
         for i = 1, #bullets.list do
-            bullets.list[i].y = bullets.list[i].y - 10
+            bullets.list[i].y = bullets.list[i].y - bullets.vel * dt
             if bullets.list[i].y < 0 then
                 table.remove(bullets.list, i)
                 break
