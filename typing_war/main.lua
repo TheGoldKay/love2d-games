@@ -20,7 +20,8 @@ function love.load()
     bullets = {} -- list of bullets (fired)
     bullets.img = love.graphics.newImage("assets/BeholderBullets.png")
     bullets.list = {} -- no bullets fired yet
-    bullets.vel = 5000
+    bullets.vel = 5000 -- make them fast to accompany the typing's speed
+    bullets.scale = 1.7 -- make the bullets bigger 
     local json_data = love.filesystem.read("assets/wordlist.json")
     words = {} -- list of words and other data related
     words.list = json.decode(json_data) -- the whole wordlist
@@ -86,7 +87,9 @@ function printOutlinedText(text, color, x, y)
     love.graphics.setColor(settings.lettering.outline)
     for i = -1, settings.lettering.offset.x do 
         for j = -1, settings.lettering.offset.y do
-            love.graphics.print(text, x + i, y + j)
+            if i ~= 0 or j ~= 0 then
+                love.graphics.print(text, x + i, y + j)
+            end
         end
     end
     -- Draw the main text
@@ -119,14 +122,14 @@ function love.draw()
     love.graphics.draw(ship.img, ship.x, ship.y)
     if #bullets.list > 0 then
         for i = 1, #bullets.list do
-            love.graphics.draw(bullets.img, bullets.list[i].x, bullets.list[i].y)
+            love.graphics.draw(bullets.img, bullets.list[i].x, bullets.list[i].y, 0, bullets.scale, bullets.scale)
         end
     end
     displayWord(words.current)
 end
 
 function shipFire()
-    table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 4, y = ship.y})
+    table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 6 - 5, y = ship.y + ship.img:getWidth()})
 end
 
 function love.keypressed(key)
