@@ -5,6 +5,8 @@ local lume = require "lume/lume"
 
 function love.load()
     --love.graphics.setBackgroundColor(rbg(unpack(settings.window.bg_color)))
+    --- font --
+    teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
     bg = {} -- background object
     -- index start at 1 in Lua
     bg.index = 9 -- there are currently seven long (3000 pixels) backgrounds to create the illusion of movement
@@ -29,8 +31,6 @@ function love.load()
     words.max = 4
     words.current = getWord()
     words.timer = {clock = 0, wait = 0.5, active = false}
-    --- font --
-    teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
 end
 
 function getWordPair(word)
@@ -58,6 +58,8 @@ function getWord()
             current.list = getWordPair(word)
             current.next = {char = word:sub(1, 1), index = 1}
             current.active = true
+            current.x = settings.window.width / 2 - teko_font:getWidth(word) / 2
+            current.y = 100
             return current
         end
     end
@@ -105,6 +107,10 @@ function displayWord(current)
     for i, letter in ipairs(current.list) do 
         if letter.is_pressed then
             color = rgb(settings.lettering.pressed)
+            if letter.char == words.current.next.char then 
+                words.current.x = x 
+                words.current.y = y
+            end
         else 
             color = rgb(settings.lettering.not_pressed)
         end 
@@ -139,7 +145,7 @@ function love.keypressed(key)
         shipFire()
     elseif key == "space" then 
         words.current = getWord()
-    elseif key == words.current.next.char then 
+    elseif key == words.current.next.char and not words.timer.active then 
         shipFire()
         words.current.list[words.current.next.index].is_pressed = true 
         words.current.next.index = words.current.next.index + 1

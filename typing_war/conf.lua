@@ -18,6 +18,7 @@ function love.conf(t)
     t.window.title = settings.window.title
     t.window.width = settings.window.width 
     t.window.height = settings.window.height 
+    t.version = "11.5"
 end
 
 return settings
