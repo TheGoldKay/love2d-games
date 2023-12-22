@@ -42,6 +42,12 @@ function love.load()
     explosion.elapsed_time = 0
     explosion.quad = getQuad(explosion.row, explosion.frame_width, explosion.frame_height, explosion.img)
     explosion.y = settings.lettering.y + 5
+    -- sound effect (explosion) -- 
+    explosion.sound = {}
+    explosion.sound.effect = love.audio.newSource("assets/explosion.mp3", "static")
+    explosion.sound.effect:setVolume(0.3)
+    explosion.sound.clock = 0
+    explosion.sound.timer = 0.5
     -- start getting words --
     words.current = getWord()
 end
@@ -132,7 +138,6 @@ function displayWord(current)
             if letter.char == words.current.next.char then 
                 words.current.x = x 
                 words.current.y = y
-                print(words.current.x, words.current.y)
             end
         else 
             color = rgb(settings.lettering.not_pressed)
@@ -199,6 +204,8 @@ function love.keypressed(key)
         shipFire()
         words.current.list[words.current.next.index].is_pressed = true 
         words.current.next.index = words.current.next.index + 1
+        love.audio.stop() -- stop any playing audio from previous strokes
+        love.audio.play(explosion.sound.effect)
         if #words.current.list < words.current.next.index then
             words.timer.active = true
             explosion.x = getCharPos()

@@ -1,0 +1,1 @@
+Typing War is a minimal copy of the game [Zty](https://zty.pe/)
