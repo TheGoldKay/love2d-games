@@ -9,7 +9,7 @@ function love.load()
     teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
     bg = {} -- background object
     -- index start at 1 in Lua
-    bg.index = 9 -- there are currently seven long (3000 pixels) backgrounds to create the illusion of movement
+    bg.index = 1 -- 1 bg for testing (less brighter than previous") (3000 pixels) backgrounds to create the illusion of movement
     -- once it reaches the end of the screen, load the next background
     bg.img = love.graphics.newImage(nextBg())
     bg.prev = {} --- table with the previous background img and position
@@ -27,10 +27,32 @@ function love.load()
     local json_data = love.filesystem.read("assets/wordlist.json")
     words = {} -- list of words and other data related
     words.list = json.decode(json_data) -- the whole wordlist
-    words.min = 2 -- the minimum length of the word to be display 
-    words.max = 4
+    words.min = 4 -- the minimum length of the word to be display 
+    words.max = 7
+    words.timer = {clock = 0, wait = 0.3, active = false}
+    --- explostion sprite sheet --- 
+    explosion = {}
+    explosion.img = love.graphics.newImage("assets/explosion2.png")
+    explosion.frame_width = 100 
+    explosion.frame_height = 100
+    explosion.row = 3
+    explosion.frames = 10
+    explosion.time = 0.001
+    explosion.current = 1
+    explosion.elapsed_time = 0
+    explosion.quad = getQuad(explosion.row, explosion.frame_width, explosion.frame_height, explosion.img)
+    explosion.y = settings.lettering.y + 5
+    -- start getting words --
     words.current = getWord()
-    words.timer = {clock = 0, wait = 0.5, active = false}
+end
+
+function getQuad(row, frameWidth, frameHeight, spriteSheet)
+    local quad = love.graphics.newQuad(
+        0, (row - 1) * frameHeight,  -- Starting coordinates for the row
+        frameWidth, frameHeight,      -- Width and height of each frame
+        spriteSheet:getDimensions()   -- Dimensions of the sprite sheet
+  )
+  return quad
 end
 
 function getWordPair(word)
@@ -59,14 +81,14 @@ function getWord()
             current.next = {char = word:sub(1, 1), index = 1}
             current.active = true
             current.x = settings.window.width / 2 - teko_font:getWidth(word) / 2
-            current.y = 100
+            current.y = settings.lettering.y
             return current
         end
     end
 end
 
 function nextBg()
-    if bg.index <= 9 then 
+    if bg.index <= 1 then 
         local bgImg = string.format("assets/bg%d.png", bg.index)
         bg.index = bg.index + 1
         return bgImg    
@@ -110,6 +132,7 @@ function displayWord(current)
             if letter.char == words.current.next.char then 
                 words.current.x = x 
                 words.current.y = y
+                print(words.current.x, words.current.y)
             end
         else 
             color = rgb(settings.lettering.not_pressed)
@@ -118,6 +141,16 @@ function displayWord(current)
         x = x + teko_font:getWidth(letter.char)
     end
     love.graphics.setColor(settings.WHITE)
+end
+
+function drawExplosion()
+    love.graphics.draw( explosion.img, 
+                        explosion.quad, 
+                        explosion.x, 
+                        explosion.y, 
+                        0, 
+                        0.4, 
+                        0.4)
 end
 
 function love.draw()
@@ -132,11 +165,28 @@ function love.draw()
         end
     end
     displayWord(words.current)
+    if explosion.active then
+        drawExplosion()
+    end
 end
 
 function shipFire()
     table.insert(bullets.list, {x = ship.x + ship.img:getWidth() / 6 - 5, y = ship.y + ship.img:getWidth()})
 end
+
+function getCharPos()
+    local x = settings.window.width / 2 - teko_font:getWidth(words.current.str) / 2
+    if words.current.next.index == 1 then
+        return x - teko_font:getWidth(words.current.list[1].char)
+    end
+    for i = 1, #words.current.list do
+        if not words.current.list[i].is_pressed or i == #words.current.list then
+            return x 
+        else 
+            x = x + teko_font:getWidth(words.current.list[i].char)
+        end
+    end
+end 
 
 function love.keypressed(key)
     if key == "escape" then
@@ -151,13 +201,36 @@ function love.keypressed(key)
         words.current.next.index = words.current.next.index + 1
         if #words.current.list < words.current.next.index then
             words.timer.active = true
+            explosion.x = getCharPos()
+            explosion.active = true 
         else 
             words.current.next.char = words.current.list[words.current.next.index].char
+            explosion.x = getCharPos() - teko_font:getWidth(words.current.next.char)
+            explosion.active = true
         end
     end
 end
 
+function updateExplosion(dt)
+    explosion.elapsed_time = explosion.elapsed_time + dt
+    if explosion.elapsed_time >= explosion.time then
+      explosion.elapsed_time = 0
+      explosion.current = explosion.current + 1
+      if explosion.current > explosion.frames then
+        explosion.current = 1  -- Loop back to the first frame
+        explosion.active = false
+      end
+      explosion.quad:setViewport(
+        (explosion.current - 1) * explosion.frame_width, (explosion.row - 1) * explosion.frame_height,
+        explosion.frame_width, explosion.frame_height
+      )
+    end
+end
+
 function love.update(dt)
+    if explosion.active then 
+        updateExplosion(dt)
+    end 
     if words.timer.active then
         words.timer.clock = words.timer.clock + dt
         if words.timer.clock >= words.timer.wait then

@@ -10,6 +10,7 @@ settings = {
         not_pressed = {255, 255, 0},
         outline = {0, 0, 0},
         offset = {x = 2, y = 4},
+        y = 100,
     },  
     WHITE = {1, 1, 1},
 }
