@@ -154,8 +154,8 @@ function drawExplosion()
                         explosion.x, 
                         explosion.y, 
                         0, 
-                        0.4, 
-                        0.4)
+                        0.5, 
+                        0.5)
 end
 
 function love.draw()
