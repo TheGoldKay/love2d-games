@@ -4,7 +4,6 @@ local fun = require "fun/fun"
 local lume = require "lume/lume"
 
 function love.load()
-    --love.graphics.setBackgroundColor(rbg(unpack(settings.window.bg_color)))
     --- font --
     teko_font = love.graphics.newFont("assets/Anton/Anton-Regular.ttf", 32)
     bg = {} -- background object
@@ -15,20 +14,23 @@ function love.load()
     bg.prev = {} --- table with the previous background img and position
     bg.y = -bg.img:getHeight() + settings.window.height
     bg.vel = 10
+    -- player's ship ---
     ship = {} -- ship object
     ship.img = love.graphics.newImage("assets/Emissary.png")
     ship.x = settings.window.width / 2 - ship.img:getWidth() / 2
     ship.y = settings.window.height  - ship.img:getHeight() * 2
+    -- bullet list --
     bullets = {} -- list of bullets (fired)
     bullets.img = love.graphics.newImage("assets/BeholderBullets.png")
     bullets.list = {} -- no bullets fired yet
     bullets.vel = 5000 -- make them fast to accompany the typing's speed
     bullets.scale = 1.7 -- make the bullets bigger 
+    -- get the list of words -- 
     local json_data = love.filesystem.read("assets/wordlist.json")
     words = {} -- list of words and other data related
     words.list = json.decode(json_data) -- the whole wordlist
-    words.min = 4 -- the minimum length of the word to be display 
-    words.max = 7
+    words.min = settings.lettering.min_length -- the minimum length of the word to be display 
+    words.max = settings.lettering.max_length -- the maximum length of the word to be display
     words.timer = {clock = 0, wait = 0.3, active = false}
     --- explostion sprite sheet --- 
     explosion = {}
@@ -47,7 +49,8 @@ function love.load()
     explosion.sound.effect = love.audio.newSource("assets/explosion.mp3", "static")
     explosion.sound.effect:setVolume(0.3)
     explosion.sound.clock = 0
-    explosion.sound.timer = 0.5
+    explosion.sound.timer = 1
+    explosion.sound.on = false
     -- start getting words --
     words.current = getWord()
 end
@@ -86,11 +89,14 @@ function getWord()
             current.list = getWordPair(word)
             current.next = {char = word:sub(1, 1), index = 1}
             current.active = true
-            current.x = settings.window.width / 2 - teko_font:getWidth(word) / 2
-            current.y = settings.lettering.y
-            return current
+            current.char_x = settings.window.width / 2 - teko_font:getWidth(word) / 2
+            current.char_y = settings.lettering.y 
+            current.x = current.char_x
+            current.y = current.char_y 
+            current.drop_vel = settings.lettering.drop_vel -- the speed the word falls towards the ship
+            return current  
         end
-    end
+    end 
 end
 
 function nextBg()
@@ -130,14 +136,15 @@ end
 
 function displayWord(current)
     love.graphics.setFont(teko_font)
-    local x, y = settings.window.width / 2 - teko_font:getWidth(current.str) / 2, 100
+    local x = current.x
+    local y = current.y
     local color -- the color of the text (word to be displayed)
     for i, letter in ipairs(current.list) do 
         if letter.is_pressed then
             color = rgb(settings.lettering.pressed)
             if letter.char == words.current.next.char then 
-                words.current.x = x 
-                words.current.y = y
+                words.current.char_x = x 
+                words.current.char_y = y
             end
         else 
             color = rgb(settings.lettering.not_pressed)
@@ -152,7 +159,7 @@ function drawExplosion()
     love.graphics.draw( explosion.img, 
                         explosion.quad, 
                         explosion.x, 
-                        explosion.y, 
+                        words.current.y, 
                         0, 
                         0.5, 
                         0.5)
@@ -193,6 +200,12 @@ function getCharPos()
     end
 end 
 
+function playExplosion()
+    love.audio.stop(explosion.sound.effect)
+    love.audio.play(explosion.sound.effect)
+    explosion.sound.on = true
+end
+
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
@@ -202,10 +215,9 @@ function love.keypressed(key)
         words.current = getWord()
     elseif key == words.current.next.char and not words.timer.active then 
         shipFire()
+        playExplosion()
         words.current.list[words.current.next.index].is_pressed = true 
         words.current.next.index = words.current.next.index + 1
-        love.audio.stop() -- stop any playing audio from previous strokes
-        love.audio.play(explosion.sound.effect)
         if #words.current.list < words.current.next.index then
             words.timer.active = true
             explosion.x = getCharPos()
@@ -235,6 +247,7 @@ function updateExplosion(dt)
 end
 
 function love.update(dt)
+    words.current.y = words.current.y + words.current.drop_vel * dt
     if explosion.active then 
         updateExplosion(dt)
     end 
@@ -268,6 +281,14 @@ function love.update(dt)
         bg.prev.y = bg.prev.y + bg.vel * dt
         if bg.prev.y >= settings.window.height then 
             bg.prev = {}
+        end
+    end
+    if explosion.sound.on then 
+        explosion.sound.clock = explosion.sound.clock + dt
+        if explosion.sound.clock >= explosion.sound.timer then
+            explosion.sound.clock = 0
+            love.audio.stop(explosion.sound.effect)
+            explosion.sound.on = false 
         end
     end
 end
