@@ -273,6 +273,7 @@ end
 function hit()
     shipFire()
     playExplosion()
+    print(words.current.list[words.current.next.index].char)
     words.current.list[words.current.next.index].is_pressed = true 
     words.current.next.index = words.current.next.index + 1
     if #words.current.list < words.current.next.index then
@@ -330,8 +331,17 @@ function updateDisplayWords(dt)
     end
 end
 
+function shipTeleport()
+    if words.current then 
+        if ship.x ~= words.current.x + teko_font:getWidth(words.current.str) / 2 - ship.img:getWidth() / 2 then 
+            ship.x = words.current.x + teko_font:getWidth(words.current.str) / 2 - ship.img:getWidth() / 2
+        end
+    end
+end
+
 function love.update(dt)
     updateDisplayWords(dt)
+    shipTeleport()
     if words.current then
         words.current = words.display[words.current_index] -- update the current word position
     end
