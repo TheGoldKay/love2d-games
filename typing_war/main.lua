@@ -47,12 +47,12 @@ function love.load()
     -- sound effect (explosion) -- 
     explosion.sound = {}
     explosion.sound.effect = love.audio.newSource("assets/explosion.mp3", "static")
-    explosion.sound.effect:setVolume(0.3)
+    explosion.sound.effect:setVolume(0.1)
     explosion.sound.clock = 0
     explosion.sound.timer = 1
     explosion.sound.on = false
     -- start getting words --
-    words.current = getWord()
+    setWordList(7)
 end
 
 function getQuad(row, frameWidth, frameHeight, spriteSheet)
@@ -75,13 +75,69 @@ function getWordPair(word)
     return pair_list
 end
 
+function setWordList(count)
+    words.current = false -- the player didn't choose what word to type yet
+    words.display = {} -- words appearing on screen
+    for i = 1, count do 
+        words.display[i] = getWord()
+    end
+end
+
+function setCurrent(key)
+    for i, w in ipairs(words.display) do
+        if w.str:sub(1, 1) == key then
+            words.current_index = i
+            return w
+        end
+    end
+    return false -- there was no match for this key stroke
+end 
+
+function isUniqueDisplay(word)
+    if #words.display == 0 then 
+        return true 
+    end
+    for i, w in ipairs(words.display) do 
+        if w.str:sub(1, 1) == word:sub(1, 1) then
+            return false 
+        end
+    end
+    return true 
+end
+
+function isColliding(x1, y1, w1, h1, x2, y2, w2, h2)
+    -- Check if the rectangles are colliding
+    local isColliding = x1 < x2 + w2 and x1 + w1 > x2 and
+                        y1 < y2 + h2 and y1 + h1 > y2
+    return isColliding
+end
+
+function canLay(x, y, word)
+    local w_width = teko_font:getWidth(word)
+    local w_height = teko_font:getHeight(word)
+    for i, w in ipairs(words.display) do
+        local display_w = teko_font:getWidth(w.str)
+        local display_h = teko_font:getHeight(w.str)
+        --print(word, x, y, w_width, w_height)
+       -- print(w, w.x, w.y, display_w, display_h)
+       -- print("\n")
+        if isColliding(x, y, w_width, w_height, w.x, w.y, display_w, display_h) then 
+            return false 
+        end
+    end
+    return true 
+end
+
+
 function getWord()
     -- the word is a table of two value tables {char, is_pressed}
     math.randomseed(os.time())
     local list = lume.shuffle(words.list)
     for i = 1, #list do 
         local word = list[i]
-        if string.len(word) >= words.min and string.len(word) <= words.max then
+        local x = love.math.random(0, settings.window.width - teko_font:getWidth(word))
+        local y = love.math.random(0, -30) --settings.lettering.y 
+        if string.len(word) >= words.min and string.len(word) <= words.max and isUniqueDisplay(word) and canLay(x, y, word) then
             table.remove(list, i)
             words.list = list
             local current = {}
@@ -89,8 +145,9 @@ function getWord()
             current.list = getWordPair(word)
             current.next = {char = word:sub(1, 1), index = 1}
             current.active = true
-            current.char_x = settings.window.width / 2 - teko_font:getWidth(word) / 2
-            current.char_y = settings.lettering.y 
+            -- word appears on screen at a random position (x-axis)
+            current.char_x = x
+            current.char_y = y
             current.x = current.char_x
             current.y = current.char_y 
             current.drop_vel = settings.lettering.drop_vel -- the speed the word falls towards the ship
@@ -133,16 +190,14 @@ function printOutlinedText(text, color, x, y)
     love.graphics.print(text, x, y)
 end
 
-
-function displayWord(current)
-    love.graphics.setFont(teko_font)
-    local x = current.x
-    local y = current.y
+function drawSingleWord(w)
+    local x = w.x
+    local y = w.y
     local color -- the color of the text (word to be displayed)
-    for i, letter in ipairs(current.list) do 
+    for i, letter in ipairs(w.list) do 
         if letter.is_pressed then
             color = rgb(settings.lettering.pressed)
-            if letter.char == words.current.next.char then 
+            if words.current and letter.char == words.current.next.char then 
                 words.current.char_x = x 
                 words.current.char_y = y
             end
@@ -155,14 +210,23 @@ function displayWord(current)
     love.graphics.setColor(settings.WHITE)
 end
 
+function displayWord()
+    love.graphics.setFont(teko_font)
+    for i, w in ipairs(words.display) do
+        drawSingleWord(w)
+    end
+end
+
 function drawExplosion()
-    love.graphics.draw( explosion.img, 
-                        explosion.quad, 
-                        explosion.x, 
-                        words.current.y, 
-                        0, 
-                        0.5, 
-                        0.5)
+    if words.current then 
+        love.graphics.draw( explosion.img, 
+                            explosion.quad, 
+                            explosion.x, 
+                            words.current.y, 
+                            0, 
+                            0.5, 
+                            0.5)
+    end
 end
 
 function love.draw()
@@ -176,8 +240,8 @@ function love.draw()
             love.graphics.draw(bullets.img, bullets.list[i].x, bullets.list[i].y, 0, bullets.scale, bullets.scale)
         end
     end
-    displayWord(words.current)
-    if explosion.active then
+    displayWord()
+    if explosion.active and words.current then
         drawExplosion()
     end
 end
@@ -187,7 +251,7 @@ function shipFire()
 end
 
 function getCharPos()
-    local x = settings.window.width / 2 - teko_font:getWidth(words.current.str) / 2
+    local x = words.current.x
     if words.current.next.index == 1 then
         return x - teko_font:getWidth(words.current.list[1].char)
     end
@@ -206,6 +270,22 @@ function playExplosion()
     explosion.sound.on = true
 end
 
+function hit()
+    shipFire()
+    playExplosion()
+    words.current.list[words.current.next.index].is_pressed = true 
+    words.current.next.index = words.current.next.index + 1
+    if #words.current.list < words.current.next.index then
+        words.timer.active = true
+        explosion.x = getCharPos()
+        explosion.active = true 
+    else 
+        words.current.next.char = words.current.list[words.current.next.index].char
+        explosion.x = getCharPos() - teko_font:getWidth(words.current.next.char)
+        explosion.active = true
+    end
+end
+
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
@@ -213,19 +293,15 @@ function love.keypressed(key)
         shipFire()
     elseif key == "space" then 
         words.current = getWord()
-    elseif key == words.current.next.char and not words.timer.active then 
-        shipFire()
-        playExplosion()
-        words.current.list[words.current.next.index].is_pressed = true 
-        words.current.next.index = words.current.next.index + 1
-        if #words.current.list < words.current.next.index then
-            words.timer.active = true
-            explosion.x = getCharPos()
-            explosion.active = true 
-        else 
-            words.current.next.char = words.current.list[words.current.next.index].char
-            explosion.x = getCharPos() - teko_font:getWidth(words.current.next.char)
-            explosion.active = true
+    end 
+    if words.current and key == words.current.next.char then 
+        print("Word: " .. words.current.str .. " " .. words.current.next.char)
+        hit()
+    else 
+        words.current = setCurrent(key)
+        if words.current then -- if the key pressed is the first letter of a displayed word
+            print("Word: " .. words.current.str .. " " .. words.current.next.char)
+            hit()
         end
     end
 end
@@ -246,8 +322,17 @@ function updateExplosion(dt)
     end
 end
 
+function updateDisplayWords(dt)
+    for i = 1, #words.display do 
+        words.display[i].y = words.display[i].y + words.display[i].drop_vel * dt
+    end
+end
+
 function love.update(dt)
-    words.current.y = words.current.y + words.current.drop_vel * dt
+    updateDisplayWords(dt)
+    if words.current then
+        words.current = words.display[words.current_index] -- update the current word position
+    end
     if explosion.active then 
         updateExplosion(dt)
     end 
@@ -256,7 +341,12 @@ function love.update(dt)
         if words.timer.clock >= words.timer.wait then
             words.timer.clock = 0
             words.timer.active = false
+            -- delete the current word (finished typing) and assign a new one
+            table.remove(words.display, words.current_index)
             words.current = getWord()
+            -- add it to the display list
+            table.insert(words.display, words.current)
+            words.current_index = #words.display
         end
     end
     bg.y = bg.y + bg.vel * dt
@@ -266,7 +356,6 @@ function love.update(dt)
         bg.prev.y = bg.y 
         bg.img = love.graphics.newImage(nextBg())
         bg.y = -bg.img:getHeight() + settings.window.height
-        print(bg.index)
     end
     if #bullets.list > 0 then
         for i = 1, #bullets.list do
