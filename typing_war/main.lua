@@ -294,9 +294,11 @@ function love.keypressed(key)
     elseif key == "space" then 
         words.current = getWord()
     end 
-    if words.current and key == words.current.next.char then 
-        print("Word: " .. words.current.str .. " " .. words.current.next.char)
-        hit()
+    if words.current then 
+        if key == words.current.next.char then
+            print("Word: " .. words.current.str .. " " .. words.current.next.char)
+            hit()
+        end
     else 
         words.current = setCurrent(key)
         if words.current then -- if the key pressed is the first letter of a displayed word
@@ -343,10 +345,10 @@ function love.update(dt)
             words.timer.active = false
             -- delete the current word (finished typing) and assign a new one
             table.remove(words.display, words.current_index)
-            words.current = getWord()
+            words.current = false -- allow another word to be picked
+            local new_word = getWord()
             -- add it to the display list
-            table.insert(words.display, words.current)
-            words.current_index = #words.display
+            table.insert(words.display, new_word) -- spawn a new word
         end
     end
     bg.y = bg.y + bg.vel * dt
