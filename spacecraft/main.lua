@@ -1,14 +1,10 @@
 local settings = require("conf")
-local love = require("love")
-local tp = require("transparent")
+local invisible_window = require("invisible_window")
 
 function love.load()
-    local transparent_color = {0,0,0}--settings.color.deep_green -- change to something you won't use in your game
-    love.graphics.setBackgroundColor(rgb(transparent_color)) -- background color equal transparency color mask
-    setWindowTransparent(settings.window.title, transparent_color)
-    ship = love.graphics.newImage("assets/ship.png")
-    ship2 = love.graphics.newImage("assets/ship2.png")
-    block = love.graphics.newImage("assets/block.png")
+    love.graphics.setBackgroundColor(rgb(settings.color.transparent)) -- background color equal transparency color mask
+    setWindowTransparent(settings.window.title, settings.color.transparent)
+    font = love.graphics.newFont(50)
 end 
 
 function rgb(r, g, b)
@@ -18,14 +14,16 @@ function rgb(r, g, b)
     return {r / 255, g / 255, b / 255} -- love2d colors range 0-1 rather than 0-255
 end
 
+function quitText()
+    love.graphics.setFont(font)
+    love.graphics.setColor({1, 0, 0})
+    local text = "Press Esc to quit"
+    local x, y = font:getWidth(text), font:getHeight(text)
+    love.graphics.print(text, settings.window.width / 2 - x / 2, settings.window.height / 2 - y / 2)
+end
+
 function love.draw()
-    local winW = love.graphics.getWidth()
-    local winH = love.graphics.getHeight()
-    love.graphics.setColor(rgb({0,0,0}))
-    love.graphics.rectangle("fill", 0, 0, settings.window.width, settings.window.height)
-    --love.graphics.setColor(rgb({255,255,255}))
-    love.graphics.draw(ship2, winW / 2 - ship2:getWidth() / 2, winH / 2 - ship2:getHeight() / 2)
-    
+    quitText()
 end
 
 function love.keypressed(key)
