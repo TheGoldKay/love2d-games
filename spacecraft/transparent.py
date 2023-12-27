@@ -3,6 +3,7 @@ import win32api
 import win32con
 import ctypes
 from ctypes import wintypes
+import json 
 
 # Define the FindWindow function signature
 FindWindow = ctypes.windll.user32.FindWindowW
@@ -16,9 +17,11 @@ def setWindowTransparent(hwnd, transparent_color):
     # This will set the opacity and transparency color key of a layered window
     win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(r, g, b), 255, win32con.LWA_COLORKEY)
 
-# HARD CODED DATE GOES HERE - WINDOW'S TITLE AND THE TRANSPARENCY COLOR
-window_name = "Spacecraft" # the name of your love2d window
-background_color = (18, 53, 36) # the background color of your love2d window 
+with open("game_data.json", 'r') as f:
+    data = json.load(f)
+    
+background_color = (data['rgb']['r'], data['rgb']['g'], data['rgb']['b'])
+window_name = data['title']
 
 window_handle = FindWindow(None, window_name) # Find the window handle (its ID pointer)
 # the window must be already runnning (the effect is applied in real time)
