@@ -1,4 +1,4 @@
-local json = require("dkjson")
+local json = require("lib.dkjson")
 local data = love.filesystem.read("game_data.json")
 local info, _, _ = json.decode(data) -- change to something you won't use in your game
 local color = {info.rgb.r, info.rgb.g, info.rgb.b}
@@ -38,7 +38,6 @@ function love.conf(t)
     t.window.height = settings.window.height
     t.window.title = settings.window.title
     t.window.borderless = settings.window.borderless
-    t.console = true
 end 
 
 return settings 

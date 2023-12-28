@@ -1,11 +1,19 @@
 local settings = require("conf")
 local invisible_window = require("invisible_window")
+local player = require("player")
+local inspect = require("lib.inspect.inspect")
 
 function love.load()
     love.graphics.setBackgroundColor(rgb(settings.color.transparent)) -- background color equal transparency color mask
     setWindowTransparent(settings.window.title, settings.color.transparent)
     font = love.graphics.newFont(50)
+    p = player:new(100, 100, 100, 100)
+    p:info()
 end 
+
+function showInfo(obj)
+    print(inspect(obj))
+end
 
 function rgb(r, g, b)
     if type(r) == "table" then
@@ -23,6 +31,7 @@ function quitText()
 end
 
 function love.draw()
+    p:draw(rgb(settings.color.deep_green))
     quitText()
 end
 
