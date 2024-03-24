@@ -2,8 +2,7 @@ local settings = {
     title = "Pet Keys",
     width = 400,
     height = 600,
-    num_lines = 3,
-    bg_color = '#111111',
+    bg_color = '#1A4146',
 }
 
 function love.conf(t)
