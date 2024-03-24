@@ -5,61 +5,81 @@ local lines = require 'lines'
 local keys = {
     width = settings.width / lines.num_lines,
     height = 150,
-    color = 'FA8072', -- SALMON COLOR
-    light_color = 'FF91A4',
+    color = '1a001a', -- SALMON COLOR
+    light_color = '4d004d',
     vel = 100,
+    timer = 0.5,
 }
 
 function keys:randY()
     return -self.height * 4 + love.math.random(0, self.height * 4)
 end
 
+function keys:makeKey(x)
+    return {
+        x = x,
+        y = self:randY(),
+        color = self.color,
+        pressed = false,
+        clock = 0,
+        step = 0.1,
+        step_timer = 0,
+    }
+end 
+
 function keys:makeKeys()
     love.math.setRandomSeed(love.timer.getTime()) 
-    self.d = {
-        x = 0,
-        y = self:randY(),
-        color = self.color
-    }
-    self.f = {
-        x = self.d.x + self.width,
-        y = self:randY(),
-        color = self.color
-    }
-    self.j = {
-        x = self.f.x + self.width,
-        y = self:randY(),
-        color = self.color
-    }
-    self.k = {
-        x = self.j.x + self.width,
-        y = self:randY(),
-        color = self.color
-    }
-    self.list = {self.d, self.f, self.j, self.k}
+    self.d = self:makeKey(0)
+    self.f = self:makeKey(self.width)
+    self.j = self:makeKey(self.width * 2)
+    self.k = self:makeKey(self.width * 3)
+    self.list = {['d'] = self.d, ['f'] = self.f, ['j'] = self.j, ['k'] = self.k}
+end
+
+function keys:canPress(key)
+    return key.y >= settings.height - self.height - 10
+end 
+
+function keys:keyPressed(key)
+    if self.list[key] and self:canPress(self.list[key]) then 
+        self.list[key].pressed = true
+        self.list[key].color = self.light_color
+    end
 end
 
 function keys:update(dt)
-    for i, key in ipairs(self.list) do 
-        key.y = key.y + self.vel * dt
-        if key.y > settings.height then
-            key.y = self:randY()
+    for i, key in pairs(self.list) do 
+        if key.y > settings.height - self.height then
+            key.pressed = true
+        end
+        if key.pressed then
+            if key.clock > key.step_timer then 
+                if key.color == self.color then
+                    key.color = self.light_color
+                else 
+                    key.color = self.color
+                end
+                key.step_timer = key.step_timer + key.step
+            end
+            key.clock = key.clock + dt
+            if key.clock > self.timer then
+                key.pressed = false
+                key.clock = 0
+                key.y = self:randY()
+                key.color = self.color
+                key.step_timer = 0
+            end
+        else
+            key.y = key.y + self.vel * dt
         end
     end
 end
 
-
-
-
 function keys:drawKeys()
-    love.graphics.setColor(helper:hex(self.d.color))
-    love.graphics.rectangle('fill', self.d.x, self.d.y, self.width, self.height)
-    love.graphics.setColor(helper:hex(self.f.color))
-    love.graphics.rectangle('fill', self.f.x, self.f.y, self.width, self.height)
-    love.graphics.setColor(helper:hex(self.j.color))
-    love.graphics.rectangle('fill', self.j.x, self.j.y, self.width, self.height)
-    love.graphics.setColor(helper:hex(self.k.color))
-    love.graphics.rectangle('fill', self.k.x, self.k.y, self.width, self.height)
+    for i, key in pairs(self.list) do
+        love.graphics.setColor(helper:hex(key.color))
+        love.graphics.rectangle('fill', key.x, key.y, self.width, self.height)
+    end
 end
 
 return keys

@@ -19,6 +19,7 @@ function love.keypressed(key)
         -- save changes and restart without closing and runnnig the game again
         love.event.quit('restart') 
     end
+    keys:keyPressed(key)
 end
 
 function love.draw()
