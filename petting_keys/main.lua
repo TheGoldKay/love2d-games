@@ -27,4 +27,5 @@ function love.draw()
 end
 
 function love.update(dt)
+    keys:update(dt)
 end
