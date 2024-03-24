@@ -9,6 +9,9 @@ function love.load()
     love.graphics.setBackgroundColor(bg_color)
     lines:makeLines()
     keys:makeKeys()
+    local font = love.graphics.newFont(20)
+    love.graphics.setFont(font)
+    score = 0
 end
 
 function love.keypressed(key)
@@ -25,8 +28,11 @@ end
 function love.draw()
     keys:drawKeys()
     lines:drawLines()
+    love.graphics.setColor({1,0.5,0})
+    love.graphics.print("Score: " .. score, 10, 10)
 end
 
 function love.update(dt)
     keys:update(dt)
+    score = keys:getScore()
 end

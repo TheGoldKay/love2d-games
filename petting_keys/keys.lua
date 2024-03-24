@@ -7,8 +7,11 @@ local keys = {
     height = 150,
     color = '1a001a', -- SALMON COLOR
     light_color = '4d004d',
+    error_color = 'ff0000',
     vel = 100,
     timer = 0.5,
+    score = 0,
+    gap = 20,
 }
 
 function keys:randY()
@@ -20,10 +23,12 @@ function keys:makeKey(x)
         x = x,
         y = self:randY(),
         color = self.color,
+        light_color = self.light_color,
         pressed = false,
         clock = 0,
         step = 0.1,
         step_timer = 0,
+        out_bounds = false
     }
 end 
 
@@ -37,7 +42,7 @@ function keys:makeKeys()
 end
 
 function keys:canPress(key)
-    return key.y >= settings.height - self.height - 10
+    return key.y + self.height >= settings.height - self.gap and key.y + self.height <= settings.height + self.gap
 end 
 
 function keys:keyPressed(key)
@@ -47,15 +52,28 @@ function keys:keyPressed(key)
     end
 end
 
+function keys:getScore()
+    return self.score 
+end
+
+function keys:setScore(key)
+    if key.out_bounds then 
+        self.score = self.score - 1
+    else
+        self.score = self.score + 1
+    end
+end
+
 function keys:update(dt)
     for i, key in pairs(self.list) do 
-        if key.y > settings.height - self.height then
-            key.pressed = true
+        if key.y + self.height >= settings.height + self.gap then
+            key.out_bounds = true
+            key.light_color = self.error_color
         end
-        if key.pressed then
+        if key.pressed or key.out_bounds then
             if key.clock > key.step_timer then 
                 if key.color == self.color then
-                    key.color = self.light_color
+                    key.color = key.light_color
                 else 
                     key.color = self.color
                 end
@@ -63,10 +81,12 @@ function keys:update(dt)
             end
             key.clock = key.clock + dt
             if key.clock > self.timer then
+                self:setScore(key)
                 key.pressed = false
                 key.clock = 0
                 key.y = self:randY()
                 key.color = self.color
+                key.out_bounds = false
                 key.step_timer = 0
             end
         else
