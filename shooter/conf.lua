@@ -1,6 +1,6 @@
 function love.conf(t)
-    t.window.width = 400
-    t.window.height = 600
+    t.window.width = 600
+    t.window.height = 800
     t.window.title = "Space Shooter"
-    t.console  = true
+    t.console = true
 end
