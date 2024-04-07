@@ -1,5 +1,8 @@
+local helper = require "love2d-helper/helper"
+
 function love.load()
-    print("I'm on load")
+    colors = helper:colors()
+    love.graphics.setBackgroundColor(colors.phthalo_green)
 end
 
 function love.keypressed(key)
