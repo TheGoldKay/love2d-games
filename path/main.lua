@@ -8,23 +8,41 @@ function love.load()
     path = trace_path(20)
 end
 
+function lay_path(i, yn)
+    local i = i or 1
+    x = math.random(range_x[1], range_x[2])
+    if yn then
+        y = yn
+    else
+        y = settings.win_h - settings.box_size * i
+    end
+    range_x[1] = x - settings.box_size 
+    if range_x[1] < 0 then 
+        range_x[1] = 0
+    end
+    range_x[2] = x + settings.box_size 
+    if range_x[2] > settings.win_w - settings.box_size then
+        range_x[2] = settings.win_w - settings.box_size
+    end
+    return {x = x, y = y}
+end
+
 function trace_path(count)
     local path = {}
     for i = 1, count do 
-        x = math.random(range_x[1], range_x[2])
-        y = settings.win_h - settings.box_size * i
-        table.insert(path, {x=x, y=y})
-        range_x[1] = x - settings.box_size 
-        if range_x[1] < 0 then 
-            range_x[1] = 0
-        end
-        range_x[2] = x + settings.box_size 
-        if range_x[2] > settings.win_w - settings.box_size then
-            range_x[2] = settings.win_w - settings.box_size
-        end
+        table.insert(path, lay_path(i))
     end
     return path 
 end
+
+function add_path()
+    local last = path[#path]
+    local y = last.y - settings.box_size 
+    if y < 0 then
+        local box = lay_path(nil, y)
+        table.insert(path, box)
+    end
+end 
 
 function love.draw()
     for k, v in pairs(path) do
@@ -49,4 +67,5 @@ function love.update(dt)
             table.remove(path, k)
         end
     end
+    add_path()
 end
