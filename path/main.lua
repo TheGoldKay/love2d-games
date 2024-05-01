@@ -1,11 +1,14 @@
 local helper = require "love2d-helper/helper"
 local settings = require "conf"
+local Player = require "player"
 
 function love.load()
     colors = helper:colors()
     love.graphics.setBackgroundColor(colors.phthalo_green)
     range_x = {settings.win_w / 2 - settings.box_size, settings.win_w / 2 + settings.box_size}
     path = trace_path(20)
+    player = Player("hello", 0)
+    print(player.a)
 end
 
 function lay_path(i, yn)
@@ -62,7 +65,7 @@ end
 
 function love.update(dt)
     for k, v in pairs(path) do
-        v.y = v.y + settings.box_size * dt 
+        v.y = v.y + settings.box_speed * dt  * 10
         if v.y > settings.win_h then
             table.remove(path, k)
         end
