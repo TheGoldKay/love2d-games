@@ -4,6 +4,7 @@ function love.load()
     drop_timer = 1 -- drop one grain at every 'x' second
     drop_clock = 0 -- store the dt of each frame to check against timer
     step = 1
+    right = false
 end 
 
 function love.keypressed(key)
@@ -46,13 +47,14 @@ function grain_collision(grain)
 end
 
 function reposition(grain, fallen)
-    if math.floor(math.random() * 10) > 5 then 
+    if right then 
         grain.x = fallen.x + grain.s * step
     else
         grain.x = fallen.x - grain.s * step
     end
     grain.y = fallen.y + grain.s * step
     step = step + 1
+    right = not right 
     return grain
 end
 
