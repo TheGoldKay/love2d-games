@@ -1,0 +1,3 @@
+[submodule "sokoban/love-sokoban-jp"]
+	path = sokoban/love-sokoban-jp
+	url = git@github.com:remyroez/love-sokoban.git
