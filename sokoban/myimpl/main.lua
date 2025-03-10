@@ -71,7 +71,9 @@ function love.keypressed(key)
         elseif(current == playerOnStorage and adjacent == empty) then 
             level[row][col] = storage
             level[nrow][ncol] = player
-        elseif(current == player and adjacent == box)
+        elseif(current == player and adjacent == box) then 
+            print("nothing")
+        end
         if(beyond) then 
             if(current == player and adjacent == box and beyond == empty) then 
                 level[row][col] = empty
