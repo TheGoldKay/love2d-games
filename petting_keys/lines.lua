@@ -1,4 +1,4 @@
-local helper = require 'love2d-helper/helper'
+local color = require 'color'
 local settings = require 'conf'
 
 local lines = {
@@ -25,7 +25,7 @@ end
 
 
 function lines:drawLines()
-    love.graphics.setColor({1,1,1}) --helper:hex(self.color)
+    love.graphics.setColor({1,1,1}) --color:hex(self.color)
     love.graphics.setLineWidth(self.thickness)
     for i, line in ipairs(self.lines) do
         love.graphics.line(unpack(line))

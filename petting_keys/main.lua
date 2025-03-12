@@ -1,10 +1,12 @@
+package.path = string.format("%s;/home/%s/love2d-helper/?.lua", package.path, os.getenv("USER"))
+
 local settings = require 'conf'
-local helper = require 'love2d-helper/helper'
+local color = require 'color'
 local lines = require 'lines'
 local keys = require 'keys'
 
 function love.load()
-    bg_color = helper:hex(settings.bg_color)
+    bg_color = color:hex(settings.bg_color)
     bg_color = {bg_color[1], bg_color[2], bg_color[3]}
     love.graphics.setBackgroundColor(bg_color)
     lines:makeLines()

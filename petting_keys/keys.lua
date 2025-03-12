@@ -1,5 +1,5 @@
 local settings = require 'conf'
-local helper = require 'love2d-helper/helper'
+local colors = require 'color'
 local lines = require 'lines'
 
 local keys = {
@@ -97,7 +97,7 @@ end
 
 function keys:drawKeys()
     for i, key in pairs(self.list) do
-        love.graphics.setColor(helper:hex(key.color))
+        love.graphics.setColor(colors:hex(key.color))
         love.graphics.rectangle('fill', key.x, key.y, self.width, self.height)
     end
 end
