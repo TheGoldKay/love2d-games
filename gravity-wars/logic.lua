@@ -73,8 +73,8 @@ function setInitialPositions()
             if allPlanets[i].x == allPlanets[j].x and allPlanets[i].y ==
                 allPlanets[j].y then
                 -- do nothing
-            elseif math.abs(allPlanets[i].x - allPlanets[j].x) < 40 and
-                math.abs(allPlanets[i].y - allPlanets[j].y) < 40 then
+            elseif planetDistCheck(allPlanets[i], allPlanets[j]) then
+                -- if any planet touches another planet, try again
                 setInitialPositions()
                 goto done
             elseif math.abs(allPlanets[i].x - player1.x) < 90 and
@@ -91,6 +91,17 @@ function setInitialPositions()
 
     ::done::
 
+end
+
+function planetDistCheck(planet1, planet2)
+    x1, y1, r1 = planet1.x, planet1.y, planet1.r
+    x2, y2, r2 = planet2.x, planet2.y, planet2.r
+    dist = math.pow(math.pow((x1 - x2), 2) + math.pow((y1 - y2), 2), 0.5)
+    if dist < r1 + r2 then
+        return true
+    else
+        return false
+    end
 end
 
 -- check collisions with every shot that is drawn
