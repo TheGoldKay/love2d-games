@@ -54,7 +54,8 @@ function setInitialPositions()
             x = math.random(100, WIDTH - 100),
             y = math.random(150, HEIGHT - 250),
             r = math.random(15, 50),
-            mass = math.random(10, 50) * 10
+            mass = math.random(10, 50) * 10,
+            id = i
         }
     end
 
@@ -70,9 +71,8 @@ function setInitialPositions()
     -- space them out by 50 px at least
     for i = 1, numOfPlanets do
         for j = 1, numOfPlanets do
-            if allPlanets[i].x == allPlanets[j].x and allPlanets[i].y ==
-                allPlanets[j].y then
-                -- do nothing
+            if allPlanets[i].id == allPlanets[j].id then
+                -- do nothing: the same planet
             elseif planetDistCheck(allPlanets[i], allPlanets[j]) then
                 -- if any planet touches another planet, try again
                 setInitialPositions()
@@ -221,14 +221,14 @@ function drawShot(b)
     -- (1)
     -- set the shot outside if it hits outside the play border
     if allBullets[b].x > WIDTH - 10 or allBullets[b].x < 10 or allBullets[b].y >
-        WIDTH - 10 or allBullets[b].y < 10 then
+        HEIGHT - 10 or allBullets[b].y < 10 then
         allBullets[b].x = 0
         allBullets[b].y = 0
     end
 
     -- (3)
     if allBullets[b].x < WIDTH - 10 and allBullets[b].x > 10 and allBullets[b].y <
-        WIDTH - 10 and allBullets[b].y > 10 then
+        HEIGHT - 10 and allBullets[b].y > 10 then
 
         -- array to store forces from each planet to each shot (temp use always)
         fpx = {}
