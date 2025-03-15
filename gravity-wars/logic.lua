@@ -38,33 +38,37 @@ end
 -- Randomize placement of planets & ships
 -- check for overlap, retry if check fails
 function setInitialPositions()
+    repeat 
+        print('randomizing planets attempt')
 
-    print('randomizing planets attempt')
+        allPlanets = {} -- reset whatever we had before first
 
-    allPlanets = {} -- reset whatever we had before first
+        -- include parameters for max and min planet locations
 
-    -- include parameters for max and min planet locations
+        -- TODO: experiment with mass
+        -- having the mass depend on radius is less fun - small planets stop mattering
+        -- mass = (math.pow(allPlanets[i].r,3)/25) -- MASS depends on radius^3 *** this affects speed of drawing
 
-    -- TODO: experiment with mass
-    -- having the mass depend on radius is less fun - small planets stop mattering
-    -- mass = (math.pow(allPlanets[i].r,3)/25) -- MASS depends on radius^3 *** this affects speed of drawing
+        for i = 1, numOfPlanets do
+            allPlanets[i] = {
+                x = math.random(100, WIDTH - 100),
+                y = math.random(150, HEIGHT - 250),
+                r = math.random(15, 50),
+                mass = math.random(10, 50) * 10,
+                id = i
+            }
+        end
 
-    for i = 1, numOfPlanets do
-        allPlanets[i] = {
-            x = math.random(100, WIDTH - 100),
-            y = math.random(150, HEIGHT - 250),
-            r = math.random(15, 50),
-            mass = math.random(10, 50) * 10,
-            id = i
-        }
-    end
+        -- reposition ships
+        player1.x = math.random(200, WIDTH / 2 - 100)
+        player1.y = math.random(200, HEIGHT - 200)
+        player2.x = math.random(WIDTH / 2 + 100, WIDTH - 200)
+        player2.y = math.random(200, HEIGHT - 200)
+        
+    until isValidPosition()
+end
 
-    -- reposition ships
-    player1.x = math.random(200, WIDTH / 2 - 100)
-    player1.y = math.random(200, HEIGHT - 200)
-    player2.x = math.random(WIDTH / 2 + 100, WIDTH - 200)
-    player2.y = math.random(200, HEIGHT - 200)
-
+function isValidPosition()
     -- TODO - compute distance with square roots - not just x & y distance
     -- check for planet overlap
     -- check for ship overlapping with planet too
@@ -73,25 +77,22 @@ function setInitialPositions()
         for j = 1, numOfPlanets do
             if allPlanets[i].id == allPlanets[j].id then
                 -- do nothing: the same planet
+                goto continue
             elseif planetDistCheck(allPlanets[i], allPlanets[j]) then
                 -- if any planet touches another planet, try again
-                setInitialPositions()
-                goto done
+                return false
             elseif math.abs(allPlanets[i].x - player1.x) < 90 and
                 math.abs(allPlanets[i].y - player1.y) < 90 then
-                setInitialPositions()
-                goto done
+                return false
             elseif math.abs(allPlanets[i].x - player2.x) < 90 and
                 math.abs(allPlanets[i].y - player2.y) < 90 then
-                setInitialPositions()
-                goto done
+                return false
             end
+            ::continue::
         end
     end
-
-    ::done::
-
-end
+    return true
+end 
 
 function planetDistCheck(planet1, planet2)
     x1, y1, r1 = planet1.x, planet1.y, planet1.r
