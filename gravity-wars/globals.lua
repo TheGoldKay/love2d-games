@@ -5,7 +5,7 @@ function loadExternalAssets()
 
     ss1 = love.graphics.newImage("assets/ss1.png")
     ss2 = love.graphics.newImage("assets/ss2.png")
-    pixelFont = love.graphics.newFont("assets/basis33.ttf", 16)
+    pixelFont = love.graphics.newFont("assets/basis33.ttf", 19)
 
 end
 
@@ -35,6 +35,9 @@ function setVariables()
 
     -- set number of Planets
     numOfPlanets = 7
+
+    -- angle rate of change (velocity) -> dt * angleVel + actualAngle = newAngle
+    angleVel = 30
 
     allPlanets = {} -- each planet will have `mass`, `r`, `x`, `y`
 
