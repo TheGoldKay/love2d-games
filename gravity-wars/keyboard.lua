@@ -8,23 +8,18 @@ function love.keypressed(key)
 
     if key == 'right' then
         keyRight = true
-        playerN.angle = playerN.angle + 1
     end
 
     if key == 'left' then
         keyLeft = true
-        --playerN.angle = playerN.angle - 1
     end
 
     if key == 'up' then
         keyUp = true
-        playerN.force = playerN.force * 1.03
-
     end
 
     if key == 'down' then
         keyDown = true
-        --playerN.force = playerN.force * 0.97
     end
 
     if key == 'x' then

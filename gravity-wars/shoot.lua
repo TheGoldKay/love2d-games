@@ -161,7 +161,8 @@ end
 
 -- blow up a location in a pretty way
 function explode(x, y)
-   
+    love.audio.stop(explosion_sound)
+    love.audio.play(explosion_sound)
     temp = 0
     
     love.graphics.setCanvas(canvas)

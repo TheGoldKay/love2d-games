@@ -2,11 +2,12 @@
 -- Code setting up all the global variables to be used
 ----------------------------------------------------------------------------------------------------
 function loadExternalAssets()
-
     ss1 = love.graphics.newImage("assets/ss1.png")
     ss2 = love.graphics.newImage("assets/ss2.png")
     pixelFont = love.graphics.newFont("assets/basis33.ttf", 19)
-
+    explosion_sound = love.audio.newSource("assets/large-underwater-explosion-190270.mp3", "static")
+    explosion_sound:setPitch(2) -- twice as fast
+    love.audio.setVolume(2) -- twice as loud
 end
 
 function setVariables()
