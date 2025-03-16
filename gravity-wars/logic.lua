@@ -2,6 +2,7 @@
 -- Code related to creating new game, planets, collision check, and draw shot
 ----------------------------------------------------------------------------------------------------
 function newGame()
+    resetBullets()
 
     setInitialPositions()
 
@@ -23,6 +24,15 @@ function newGame()
 
     print("New Game Started")
 
+end
+
+function resetBullets()
+    for i, v in pairs(allBullets) do
+        allBullets[i].x = 0
+        allBullets[i].y = 0
+        allBullets[i].vx = 0
+        allBullets[i].vy = 0
+    end
 end
 
 -- returns `player1` or `player2` table (object) depending on whose turn it is
