@@ -7,15 +7,15 @@
 -- f - force            additional to player's chosen force,
 -- t - theta (angle)    additional to player's chosen angle,
 -- bulletIndex - index of the bullet
-function setBulletInitialVelocity(f, t, bulletIndex)
-
+function setBulletInitialVelocity(f, t, bulletIndex, angle)
+    angle = angle or false
     if turn == 1 then
         -- preturb it by a bit for jitter so it's not the same
-        f = player1.force + f -- + math.random() * 2
-        t = player1.angle + t -- + math.random() * 10
+        f = player1.force + f + math.random() * 2
+        t = player1.angle + t + math.random() * 10
     elseif turn == 2 then
-        f = player2.force + f -- + math.random() * 2
-        t = player2.angle + t -- + math.random() * 10
+        f = player2.force + f + math.random() * 2
+        t = player2.angle + t + math.random() * 10
     end
 
     -- *** REDUCE THE FORCE BY some amount and reduce weight of planets by some amount
@@ -23,35 +23,60 @@ function setBulletInitialVelocity(f, t, bulletIndex)
     f = f / 2
 
     -- calculate the x and y components of shot for initial force
-    allBullets[bulletIndex].vx = f * math.cos(0.0174533 * t)
-    allBullets[bulletIndex].vy = f * math.sin(0.0174533 * t)
+    if angle then
+        allBullets[bulletIndex].vx = f * math.cos(0.0174533 * angle)
+        allBullets[bulletIndex].vy = f * math.sin(0.0174533 * angle)
+    else 
+        allBullets[bulletIndex].vx = f * math.cos(0.0174533 * t)
+        allBullets[bulletIndex].vy = f * math.sin(0.0174533 * t)
+    end
+    
 
+end
+
+function resetShot(bulletIndex)
+    allBullets[bulletIndex].x = 0
+    allBullets[bulletIndex].y = 0
+    allBullets[bulletIndex].vx = 0
+    allBullets[bulletIndex].vy = 0
 end
 
 -- to split a bullet (special bullet type allows for splitting while in air)
 function split(x, y)
-
-    love.graphics.ellipse('line', x, y, 10, 10)
+    print("-----> SPLITING BEGIN")
+    local num = 2
 
     -- print("SPLIT @ ", x, y)
 
     temp = 0
-
-    for i = 1, 3 do
+    --allBullets[1].x = 100
+    for i = 1, num do
         temp = numOfBullets + i
-        allBullets[i] = {}
+        --allBullets[i] = {}
+        --resetShot(i) 
+        
+        allBullets[temp] = {}
+        --print(x, y)
         allBullets[temp].x = x
         allBullets[temp].y = y
     end
 
-    numOfBullets = numOfBullets + 3
+    numOfBullets = numOfBullets + num
     temp = 0
+    diffAngle = 30
+    playerN = currentPlayer()
+    angles = {playerN.lastAngle - diffAngle, playerN.lastAngle + diffAngle}
 
-    for i = 1, 3 do
-        temp = numOfBullets - 3 + i
-        setBulletInitialVelocity(0.01, math.random(0, 360), temp)
+    for i = 1, num do
+        temp = numOfBullets - num + i
+        print(allBullets[temp].x, allBullets[temp].y)
+        setBulletInitialVelocity(0.01, math.random(0, 360), temp, angles[i])
     end
 
+    for i, v in pairs(allBullets) do
+        print(i, v.x, v.y, v.vx, v.vy)
+    end
+    --resetShot(1) 
 end
 
 function shotType1()

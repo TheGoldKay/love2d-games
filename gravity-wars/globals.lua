@@ -29,7 +29,7 @@ function setVariables()
     -- colorMode = 1
 
     -- bullet type (should be changeable by player)
-    bulType = 1
+    --bulType = 1
 
     -- set number of bullets
     numOfBullets = 10

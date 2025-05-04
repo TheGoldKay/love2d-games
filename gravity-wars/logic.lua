@@ -28,10 +28,7 @@ end
 
 function resetBullets()
     for i, v in pairs(allBullets) do
-        allBullets[i].x = 0
-        allBullets[i].y = 0
-        allBullets[i].vx = 0
-        allBullets[i].vy = 0
+        resetShot(i)
     end
 end
 
@@ -231,6 +228,7 @@ function drawShot(b)
 
     -- (1)
     -- set the shot outside if it hits outside the play border
+    --print(b, allBullets[b].x)
     if allBullets[b].x > WIDTH - 10 or allBullets[b].x < 10 or allBullets[b].y >
         HEIGHT - 10 or allBullets[b].y < 10 then
         allBullets[b].x = 0

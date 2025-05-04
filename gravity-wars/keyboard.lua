@@ -4,7 +4,6 @@
 function love.keypressed(key)
 
     print(key)
-    playerN = currentPlayer()
 
     if key == 'right' then
         keyRight = true
@@ -34,6 +33,10 @@ function love.keypressed(key)
         playerPressedShootButton()
     end
 
+    if key == 's' then 
+        split(allBullets[1].x, allBullets[1].y)
+    end
+
     if key == 'escape' then
         os.exit()
     end
@@ -48,6 +51,7 @@ function love.keyreleased(key)
 end
 
 function love.update(dt)
+    playerN = currentPlayer()
     if keyRight then
         playerN.angle = playerN.angle + dt * angleVel
     elseif keyLeft then
