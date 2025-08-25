@@ -180,7 +180,7 @@ class SeleneBuild
         
         return rv
 
-    test: (patterns, verbose) =>
+    test: (patterns) =>
         rv = OK
         for _, pattern in ipairs patterns
             print("Running tests with pattern #{pattern}")
@@ -189,7 +189,6 @@ class SeleneBuild
             status = result\close!
             if not status
                 rv = ERR
-            if not status or verbose
                 print(output)
 
         if rv == ERR
@@ -205,11 +204,10 @@ main = (arg) ->
     argparse = require("argparse")
     parser = argparse("build", "Build a Selene project")
     parser\argument("src", "Source directory")
-    parser\flag("-c --clean", "Clean the build directory (remove lua build files)")
-    parser\flag("-d --dist", "Build a distribution and remove all moonscript files after building")
-    parser\flag("-y --yes", "Answer yes to all prompts. THIS MAY BE DANGEROUS!")
-    parser\flag("-t --test", "Run tests")
-    parser\flag("-v --verbose", "Run tests")
+    parser\flag("-c --clean", "Clean the build directory (remove lua build files)")\args("?")
+    parser\flag("-d --dist", "Build a distribution and remove all moonscript files after building")\args("?")
+    parser\flag("-y --yes", "Answer yes to all prompts. THIS MAY BE DANGEROUS!")\args("?")
+    parser\flag("-t --test", "Run tests")\args("?")
     parser\option("-p --pattern", "Pattern(s) to use to search for test files")\args("+")\default("Test.+%.moon")\defmode("u")
     args = parser\parse(arg)
 
@@ -222,7 +220,7 @@ main = (arg) ->
     rv = OK
 
     if args["test"]
-        rv = build\test(args["pattern"], args["verbose"])
+        rv = build\test(args["pattern"])
     elseif args["clean"]
         rv = build\clean!
     elseif args["dist"]
