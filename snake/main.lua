@@ -13,13 +13,13 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == 'w' and snake.dir ~= 'down' then 
+    if key == 'w' or key == "up" and snake.dir ~= 'down' then 
         snake.dir = 'up'
-    elseif key == 's' and snake.dir ~= 'up' then 
+    elseif key == 's' or key == "down" and snake.dir ~= 'up' then 
         snake.dir = 'down'
-    elseif key == 'a' and snake.dir ~= 'right' then 
+    elseif key == 'a' or key == "left" and snake.dir ~= 'right' then 
         snake.dir = 'left'
-    elseif key == 'd' and snake.dir ~= 'left' then 
+    elseif key == 'd' or key == "right" and snake.dir ~= 'left' then 
         snake.dir = 'right'
     elseif key == 'escape' then 
         love.event.quit()
