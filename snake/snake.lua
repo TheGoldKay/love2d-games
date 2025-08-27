@@ -6,6 +6,8 @@ function Snake:init()
     self.box = 20
     self.xmax = love.graphics.getWidth() / self.box 
     self.ymax = love.graphics.getHeight() / self.box 
+    self.x_vel = -1
+    self.y_vel = 0
     self.body = {}
     head = {}
     head.x = self.xmax / 2
@@ -41,14 +43,20 @@ function Snake:move(dt, food)
         self.clock = 0
         local head = self.body[1]
         x, y = head.x, head.y
+        self.x_vel = 0
+        self.y_vel = 0
         if self.dir == 'left' then 
             x = x - 1
+            self.x_vel = -1
         elseif self.dir == 'right' then 
             x = x + 1
+            self.x_vel = 1
         elseif self.dir == 'up' then 
             y = y - 1
+            self.y_vel = -1
         elseif self.dir == 'down' then 
             y = y + 1
+            self.y_vel = 1
         end 
         if x < 0 then 
             x = self.xmax
@@ -71,7 +79,11 @@ end
 
 function Snake:eat(food)
     if food.x == self.body[1].x and food.y == self.body[1].y then 
-        table.insert(self.body, {x=self.body[#self.body].x, y=self.body[#self.body].y})
+        --table.insert(self.body, {x=self.body[#self.body].x, y=self.body[#self.body].y})
+        table.insert(self.body, 1, {
+            x = food.x + self.x_vel, 
+            y = food.y + self.y_vel
+        })
         food:new()
     end 
     --return food 
