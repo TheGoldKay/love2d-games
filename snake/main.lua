@@ -27,6 +27,7 @@ function love.keypressed(key)
 end 
 
 function love.update(dt)
+    snake:update(dt)
     snake:move(dt)
     snake:eat(food)
 end

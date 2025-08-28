@@ -77,7 +77,24 @@ function Snake:move(dt, food)
     end 
 end 
 
-function Snake:eat(food)
+function Snake:update(dt)
+    local head = self.body[1]
+    if head.x > food.x and self.dir ~= "right" then 
+        self.dir = "left"
+        print("left")
+    elseif head.x < food.x and self.dir ~= "left" then 
+        self.dir = "right"
+        print("right")
+    elseif head.y > food.y and self.dir ~= "down" then 
+        self.dir = "up"
+        print("up")
+    elseif head.y < food.y and self.dir ~= "up" then 
+        self.dir = "down"
+        print("down")
+    end 
+end
+
+function Snake:eat()
     if food.x == self.body[1].x and food.y == self.body[1].y then 
         --table.insert(self.body, {x=self.body[#self.body].x, y=self.body[#self.body].y})
         table.insert(self.body, 1, {
